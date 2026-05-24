@@ -5,6 +5,7 @@ import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
 import ServicesSection from './components/ServicesSection'
 import PlansSection from './components/PlansSection'
+import CommunitySection from './components/CommunitySection'
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <StatsSection />
       <ServicesSection />
       <PlansSection />
+      <CommunitySection />
       <Footer />
     </div>
   )
