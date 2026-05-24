@@ -6,7 +6,7 @@ const Card = ({ number, title }) => {
       className="
         bg-black/40
         backdrop-blur-xl
-        border border-red-500/30
+        border border-red-500
         rounded-2xl
         px-6 py-4
         text-white
