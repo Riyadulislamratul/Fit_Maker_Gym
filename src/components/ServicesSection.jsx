@@ -37,38 +37,38 @@ const services = [
 
 const ServicesSection = () => {
   return (
-    <section className="relative py-50 text-white">
+    <section className="relative overflow-hidden lg:overflow-visible py-20 sm:py-24 lg:py-50 text-white">
       {/* Glow Background */}
-      <div className="absolute left-[-120px] top-20 h-72 w-72 rounded-full bg-red-600/20 blur-[120px]" />
-      <div className="absolute right-[-120px] bottom-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px]" />
+      <div className="absolute left-[-120px] top-20 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-red-600 blur-[100px] sm:blur-[120px]" />
+      <div className="absolute right-[-120px] bottom-0 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-orange-500 blur-[100px] sm:blur-[120px] hidden lg:block" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         {/* Heading */}
         <div className="text-center">
-          <h2 className="text-4xl font-extrabold">
+          <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight">
             Our <span className="text-red-500">Services</span>
           </h2>
 
-          <p className="mx-auto mt-4 max-w-3xl text-sm text-gray-400">
+          <p className="mx-auto mt-4 max-w-3xl text-sm sm:text-base text-gray-400 leading-6">
             At This Part You Can Easily Access All Of Our Services.
             Take A Look At Them And Choose Which Ever You Want.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-12 sm:mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {services.map((service, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-3xl border cursor-pointer border-red-500/10 bg-[#111] transition-all duration-500 hover:-translate-y-3 hover:border-red-500/50 hover:shadow-[0_0_40px_rgba(255,0,0,0.25)]"
+              className="group relative overflow-hidden rounded-3xl border cursor-pointer border-red-500/10 bg-[#111] transition-all duration-500 hover:-translate-y-3 hover:border-red-500 hover:shadow-[0_0_40px_rgba(255,0,0,0.25)]"
             >
-              {/* Image Placeholder */}
-              <div className="h-[320px] w-full overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900">
+              {/* Image */}
+              <div className="h-[260px] sm:h-[320px] w-full overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900">
                 <div className="flex h-full items-center justify-center text-gray-600 transition duration-500 group-hover:scale-110">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="h-full w-full object-cover opacity-80"
+                    className="h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
               </div>
@@ -80,22 +80,22 @@ const ServicesSection = () => {
               <div className="absolute -bottom-20 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-red-500/0 blur-3xl transition-all duration-500 group-hover:bg-red-500/30" />
 
               {/* Content */}
-              <div className="absolute inset-0 flex flex-col justify-between p-5">
+              <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5">
                 <div>
-                  <h3 className="text-xl font-extrabold text-red-500 transition duration-300 group-hover:translate-x-2">
+                  <h3 className="text-lg sm:text-xl font-extrabold text-red-500 transition duration-300 group-hover:translate-x-2">
                     {service.title}
                   </h3>
 
-                  <p className="mt-2 text-xs font-semibold text-gray-200">
+                  <p className="mt-2 text-[11px] sm:text-xs font-semibold text-gray-200 leading-5">
                     {service.subtitle}
                   </p>
 
-                  <p className="mt-4 text-xs leading-6 text-gray-400 transition duration-300 group-hover:text-gray-300">
+                  <p className="mt-3 sm:mt-4 text-[11px] sm:text-xs leading-5 sm:leading-6 text-gray-400 transition duration-300 group-hover:text-gray-300">
                     {service.description}
                   </p>
                 </div>
 
-                <button className="flex items-center gap-2 text-sm font-semibold text-white transition-all duration-300 group-hover:gap-4 group-hover:text-red-500">
+                <button className="mt-6 flex items-center gap-2 text-xs sm:text-sm font-semibold text-white transition-all duration-300 group-hover:gap-4 group-hover:text-red-500">
                   Learn More →
                 </button>
               </div>

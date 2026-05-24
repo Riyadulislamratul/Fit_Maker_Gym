@@ -3,7 +3,7 @@ import Card from "./Card";
 
 const Hero = () => {
   return (
-    <section className="relative  text-white pt-24 lg:pt-30 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden lg:overflow-visible text-white pt-24 lg:pt-30 pb-16 lg:pb-20">
       {/* Background Glow */}
       <div className="absolute top-20 left-0 sm:left-10 w-[220px] sm:w-[300px] h-[220px] sm:h-[300px] bg-orange-500 blur-[120px] rounded-full"></div>
 

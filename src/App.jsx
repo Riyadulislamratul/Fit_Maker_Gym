@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
 import ServicesSection from './components/ServicesSection'
+import PlansSection from './components/PlansSection'
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Hero />
       <StatsSection />
       <ServicesSection />
+      <PlansSection />
       <Footer />
     </div>
   )
