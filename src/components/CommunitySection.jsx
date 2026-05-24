@@ -23,8 +23,8 @@ const CommunitySection = () => {
   return (
     <section className="relative overflow-hidden lg:overflow-visible py-20 text-white">
       {/* Glow Effects */}
-      <div className="absolute -left-20 -top-17 h-72 w-72 rounded-full bg-red-500 blur-[120px]" />
-      <div className="absolute right-0 bottom-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px]" />
+      <div className="absolute lg:-left-20 lg:-top-17 lg:size-72 rounded-full bg-red-500 blur-[120px] left-0 top-20 size-37" />
+      <div className="absolute lg:right-0 lg:bottom-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px] right-0 bottom-49" />
 
       <div className="relative max-w-7xl mx-auto z-10">
         <h2 className="text-4xl font-extrabold leading-tight text-center">
