@@ -7,6 +7,7 @@ import ServicesSection from './components/ServicesSection'
 import PlansSection from './components/PlansSection'
 import CommunitySection from './components/CommunitySection'
 import AuthSection from './components/AuthSection'
+import FaqSection from './components/FaqSection'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
       <PlansSection  id="plans" />
       <CommunitySection  id="coaching" />
       <AuthSection  id="auth" />
+      <FaqSection  id="faq" />
       <Footer />
     </div>
   )
