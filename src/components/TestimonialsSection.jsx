@@ -103,11 +103,11 @@ const TestimonialsSection = () => {
 
         {/* Navigation */}
         <div className="mt-10 flex justify-center gap-4 ">
-          <button className="test-prev flex h-12 w-12 items-center justify-center rounded-full border border-red-500/30 bg-[#111] transition hover:bg-red-500 cursor-pointer">
+          <button className="test-prev flex h-12 w-12 items-center justify-center rounded-full border border-red-500/30 bg-[#111] transition hover:bg-red-500 cursor-pointer duration-500">
             ←
           </button>
 
-          <button className="test-next flex h-12 w-12 items-center justify-center rounded-full border border-red-500/30 bg-[#111] transition hover:bg-red-500 cursor-pointer">
+          <button className="test-next flex h-12 w-12 items-center justify-center rounded-full border border-red-500/30 bg-[#111] transition hover:bg-red-500 cursor-pointer duration-500">
             →
           </button>
         </div>

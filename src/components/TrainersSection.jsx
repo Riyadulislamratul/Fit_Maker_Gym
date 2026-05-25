@@ -38,9 +38,9 @@ const TrainersSection = () => {
   const visibleTrainers = showAll ? trainers : trainers.slice(0, 4);
 
   return (
-    <section className="relative overflow-hidden py-24 text-white">
+    <section className="relative overflow-hidden lg:overflow-visible py-24 text-white">
       {/* Glow */}
-      <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-[120px]" />
+      <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         

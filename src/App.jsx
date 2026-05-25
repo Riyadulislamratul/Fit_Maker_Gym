@@ -11,6 +11,7 @@ import TrainersSection from './components/TrainersSection'
 import CommunitySection from './components/CommunitySection'
 import AuthSection from './components/AuthSection'
 import FaqSection from './components/FaqSection'
+import BlogPostsSection from './components/BlogPostsSection'
 
 const App = () => {
   return (
@@ -20,9 +21,10 @@ const App = () => {
       <StatsSection />
       <ServicesSection  id="services" />
       <PlansSection  id="plans" />
-      <ToolsSection  id="tools" />
+      {/* <ToolsSection  id="tools" /> */}
       <TestimonialsSection  id="testimonials" />
       <TrainersSection  id="trainers" />
+      <BlogPostsSection  id="blog" />
       <CommunitySection  id="coaching" />
       <AuthSection  id="auth" />
       <FaqSection  id="faq" />
