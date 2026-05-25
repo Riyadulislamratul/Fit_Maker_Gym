@@ -26,7 +26,7 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="relative overflow-hidden py-24 text-white">
+    <section className="relative overflow-hidden lg:overflow-visible py-24 text-white">
       {/* Glow */}
       <div className="absolute left-0 top-20 h-72 w-72 rounded-full bg-red-500/20 blur-[120px]" />
 

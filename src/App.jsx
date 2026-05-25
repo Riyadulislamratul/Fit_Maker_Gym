@@ -7,6 +7,7 @@ import ServicesSection from './components/ServicesSection'
 import PlansSection from './components/PlansSection'
 import ToolsSection from './components/ToolsSection'
 import TestimonialsSection from './components/TestimonialsSection'
+import TrainersSection from './components/TrainersSection'
 import CommunitySection from './components/CommunitySection'
 import AuthSection from './components/AuthSection'
 import FaqSection from './components/FaqSection'
@@ -21,6 +22,7 @@ const App = () => {
       <PlansSection  id="plans" />
       <ToolsSection  id="tools" />
       <TestimonialsSection  id="testimonials" />
+      <TrainersSection  id="trainers" />
       <CommunitySection  id="coaching" />
       <AuthSection  id="auth" />
       <FaqSection  id="faq" />
