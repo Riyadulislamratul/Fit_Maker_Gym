@@ -12,12 +12,12 @@ const App = () => {
   return (
     <div className='bg-[#0f0f0f]'>
       <Header />
-      <Hero />
+      <Hero  />
       <StatsSection />
-      <ServicesSection />
-      <PlansSection />
-      <CommunitySection />
-      <AuthSection />
+      <ServicesSection  id="services" />
+      <PlansSection  id="plans" />
+      <CommunitySection  id="coaching" />
+      <AuthSection  id="auth" />
       <Footer />
     </div>
   )

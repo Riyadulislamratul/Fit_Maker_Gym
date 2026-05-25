@@ -4,6 +4,18 @@ import { Search, Menu, X } from "lucide-react";
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Active Menu State
+  const [active, setActive] = useState("home");
+
+  // Navigation Items
+  const navItems = [
+    { name: "Home", id: "home" },
+    { name: "Services", id: "services" },
+    { name: "Membership", id: "plans" },
+    { name: "Coaching", id: "coaching" },
+    { name: "About Us", id: "about" },
+  ];
+
   return (
     <header
       className="
@@ -16,16 +28,16 @@ const Header = () => {
     >
       {/* Glow Effects */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-20 left-10 sm:left-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-red-600 blur-[100px] rounded-full"></div>
+        {/* <div className="absolute -top-20 left-10 sm:left-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-red-600 blur-[100px] rounded-full"></div>
 
-        <div className="absolute -top-20 right-10 sm:right-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-orange-500 blur-[100px] rounded-full"></div>
+        <div className="absolute -top-20 right-10 sm:right-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-orange-500 blur-[100px] rounded-full"></div> */}
       </div>
 
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-3">
         
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer shrink-0">
+        <a href="#home" className="flex items-center gap-2 cursor-pointer shrink-0">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-red-600"></div>
 
           <div>
@@ -37,39 +49,47 @@ const Header = () => {
               Transform Your Body
             </p>
           </div>
-        </div>
+        </a>
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-8 text-sm cursor-pointer">
-          <a
-            href="#"
-            className="text-white border-b-2 border-red-500 pb-1"
-          >
-            Home
-          </a>
+          {navItems.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              onClick={() => setActive(item.id)}
+              className={`
+                relative pb-1 transition duration-300 active:scale-95
 
-          <a href="#" className="text-gray-300 hover:text-white transition">
-            Programs
-          </a>
+                ${
+                  active === item.id
+                    ? "text-white"
+                    : "text-gray-300 hover:text-white"
+                }
 
-          <a href="#" className="text-gray-300 hover:text-white transition">
-            Coaching
-          </a>
+                after:absolute after:left-0 after:-bottom-1
+                after:w-full after:h-[2px]
+                after:bg-red-500
+                after:origin-left
+                after:transition-transform after:duration-300
 
-          <a href="#" className="text-gray-300 hover:text-white transition">
-            Membership
-          </a>
-
-          <a href="#" className="text-gray-300 hover:text-white transition">
-            About Us
-          </a>
+                ${
+                  active === item.id
+                    ? "after:scale-x-100"
+                    : "after:scale-x-0 hover:after:scale-x-100"
+                }
+              `}
+            >
+              {item.name}
+            </a>
+          ))}
         </nav>
 
         {/* Right Side */}
         <div className="flex items-center gap-2 sm:gap-3">
 
           {/* Large Device Search Icon */}
-          <button className="hidden md:flex w-10 h-10 rounded-full bg-orange-500 cursor-pointer border border-white/10 backdrop-blur-xl items-center justify-center text-white hover:bg-white/10 transition">
+          <button className="hidden md:flex w-10 h-10 rounded-full bg-orange-500 cursor-pointer border border-white/10 backdrop-blur-xl items-center justify-center text-white hover:bg-white/10 transition" >
             <Search size={18} />
           </button>
 
@@ -86,13 +106,17 @@ const Header = () => {
 
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="px-5 py-2 rounded-full border border-red-500 text-white hover:bg-red-500/20 transition cursor-pointer text-sm">
+           <a href="#auth">
+             <button className="px-5 py-2 rounded-full border border-red-500 text-white hover:bg-red-500/20 transition cursor-pointer text-sm" >
               Login
             </button>
+           </a>
 
-            <button className="px-5 py-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition cursor-pointer text-sm">
+          <a href="#auth">
+             <button className="px-5 py-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition cursor-pointer text-sm" >
               Sign Up
             </button>
+          </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -113,27 +137,29 @@ const Header = () => {
       >
         <div className="px-5 pb-6 pt-4 bg-black/40 backdrop-blur-2xl border-t border-white/10">
           
-          {/* Nav Links */}
+          {/* Mobile Nav */}
           <nav className="flex flex-col gap-5 text-sm">
-            <a href="#" className="text-white">
-              Home
-            </a>
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={() => {
+                  setActive(item.id);
+                  setMenuOpen(false);
+                }}
+                className={`
+                  transition duration-300 active:scale-95
 
-            <a href="#" className="text-gray-300 hover:text-white transition">
-              Programs
-            </a>
-
-            <a href="#" className="text-gray-300 hover:text-white transition">
-              Coaching
-            </a>
-
-            <a href="#" className="text-gray-300 hover:text-white transition">
-              Membership
-            </a>
-
-            <a href="#" className="text-gray-300 hover:text-white transition">
-              About Us
-            </a>
+                  ${
+                    active === item.id
+                      ? "text-white translate-x-2"
+                      : "text-gray-300 hover:text-white hover:translate-x-2"
+                  }
+                `}
+              >
+                {item.name}
+              </a>
+            ))}
           </nav>
 
           {/* Mobile Buttons */}

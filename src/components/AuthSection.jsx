@@ -4,7 +4,7 @@ const AuthSection = () => {
   const [activeTab, setActiveTab] = useState("signup");
 
   return (
-    <section className="relative overflow-hidden lg:overflow-visible py-20 text-white">
+    <section className="relative overflow-hidden lg:overflow-visible py-20 text-white" id="auth">
       {/* Glow */}
       <div className="absolute right-0 -top-30 h-72 w-72 rounded-full bg-orange-500 blur-[120px] hidden lg:block" />
       <div className="absolute lg:left-[-100px] lg:bottom-0 h-72 w-72 rounded-full bg-red-500 blur-[120px] bottom-40 left-[-100px]" />

@@ -3,7 +3,7 @@ import Card from "./Card";
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden lg:overflow-visible text-white pt-24 lg:pt-30 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden lg:overflow-visible text-white pt-24 lg:pt-30 pb-16 lg:pb-20" id="home">
       {/* Background Glow */}
       <div className="absolute top-20 left-0 sm:left-10 w-[220px] sm:w-[300px] h-[220px] sm:h-[300px] bg-orange-500 blur-[120px] rounded-full"></div>
 
@@ -33,11 +33,11 @@ const Hero = () => {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 sm:gap-5 mt-8 lg:mt-10">
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-red-600 hover:bg-red-700 transition cursor-pointer">
+            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-red-600 hover:bg-red-700 transition cursor-pointer duration-300">
               Start Your Journey
             </button>
 
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full border border-orange-500 hover:bg-orange-500/10 transition cursor-pointer">
+            <button className="w-full sm:w-auto px-8 py-4 rounded-full border border-orange-500 hover:bg-orange-500/10 transition cursor-pointer duration-300">
               Explore Programs
             </button>
           </div>

@@ -26,10 +26,10 @@ const Footer = () => {
 
           {/* Socials */}
           <div className="mt-8 flex gap-4">
-            {["f", "ig", "x", "yt"].map((icon, i) => (
+            {["F", "Ig", "X", "Yt"].map((icon, i) => (
               <button
                 key={i}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-[#111] text-sm transition cursor-pointer hover:border-red-500 hover:bg-red-500/10 hover:text-red-500"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-[#111] text-sm transition cursor-pointer hover:border-red-500 hover:bg-red-500/10 hover:text-red-500 duration-500"
               >
                 {icon}
               </button>
@@ -52,7 +52,7 @@ const Footer = () => {
             ].map((item, index) => (
               <li
                 key={index}
-                className="cursor-pointer transition hover:text-red-500"
+                className="cursor-pointer transition hover:text-red-500 duration-400"
               >
                 {item}
               </li>
@@ -75,7 +75,7 @@ const Footer = () => {
             ].map((item, index) => (
               <li
                 key={index}
-                className="cursor-pointer transition hover:text-red-500"
+                className="cursor-pointer transition hover:text-red-500 duration-400"
               >
                 {item}
               </li>

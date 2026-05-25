@@ -37,7 +37,7 @@ const services = [
 
 const ServicesSection = () => {
   return (
-    <section className="relative overflow-hidden lg:overflow-visible py-20 sm:py-24 lg:py-50 text-white">
+    <section className="relative overflow-hidden lg:overflow-visible py-20 sm:py-24 lg:py-50 text-white" id="services">
       {/* Glow Background */}
       <div className="absolute left-[-120px] top-20 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-red-600 blur-[100px] sm:blur-[120px]" />
       <div className="absolute right-[-120px] bottom-0 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-orange-500 blur-[100px] sm:blur-[120px] hidden lg:block" />
