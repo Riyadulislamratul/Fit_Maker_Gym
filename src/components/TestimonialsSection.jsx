@@ -57,13 +57,13 @@ const TestimonialsSection = () => {
               <div className="grid items-center gap-10 lg:grid-cols-[250px_1fr_200px]">
                 {/* Left Image */}
                 <div className="group relative">
-                  <div className="absolute inset-0 rounded-full bg-red-500/20 blur-3xl" />
+                  <div className="absolute inset-0 rounded-full  blur-3xl" />
 
                   <div className="relative overflow-hidden rounded-[40px] border border-red-500/20 bg-[#111]">
                     <img
                       src={item.img}
                       alt=""
-                      className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-110"
+                      className="h-[550px] lg:h-[350px] w-full object-cover transition duration-500 group-hover:scale-110"
                     />
                   </div>
                 </div>

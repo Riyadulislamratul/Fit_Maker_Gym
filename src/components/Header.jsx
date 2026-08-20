@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import { Search, Menu, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search, Menu, X, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [scrolled, setScrolled] = useState(false);
 
-  // Active Menu State
+  // Active section
   const [active, setActive] = useState("home");
 
-  // Navigation Items
   const navItems = [
     { name: "Home", id: "home" },
     { name: "Services", id: "services" },
@@ -16,165 +19,769 @@ const Header = () => {
     { name: "About Us", id: "about" },
   ];
 
+  // --------------------------------------------------
+  // Scroll Detection
+  // --------------------------------------------------
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // --------------------------------------------------
+  // Detect Active Section
+  // --------------------------------------------------
+
+  useEffect(() => {
+    const sections = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleSection = entries.find(
+          (entry) => entry.isIntersecting
+        );
+
+        if (visibleSection) {
+          setActive(visibleSection.target.id);
+        }
+      },
+      {
+        threshold: 0.25,
+        rootMargin: "-100px 0px -50% 0px",
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // --------------------------------------------------
+  // Close menus with Escape
+  // --------------------------------------------------
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setSearchOpen(false);
+        setSearchValue("");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // --------------------------------------------------
+  // Prevent body scrolling when menu/search is open
+  // --------------------------------------------------
+
+  useEffect(() => {
+    if (menuOpen || searchOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen, searchOpen]);
+
+  // --------------------------------------------------
+  // Smooth Scroll
+  // --------------------------------------------------
+
+  const handleNavigation = (id) => {
+    const section = document.getElementById(id);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
+    setActive(id);
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setSearchValue("");
+  };
+
+  // --------------------------------------------------
+  // Search
+  // --------------------------------------------------
+
+  const filteredItems = navItems.filter((item) =>
+    item.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
-    <header
-      className="
-        fixed top-0 left-0 w-full z-50
-        bg-white/10
-        backdrop-blur-2xl
-        border-b border-white/10
-        shadow-[0_8px_32px_rgba(0,0,0,0.35)]
-      "
-    >
-      {/* Glow Effects */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        {/* <div className="absolute -top-20 left-10 sm:left-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-red-600 blur-[100px] rounded-full"></div>
+    <>
+      {/* ==================================================
+          HEADER
+      ================================================== */}
 
-        <div className="absolute -top-20 right-10 sm:right-20 w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] bg-orange-500 blur-[100px] rounded-full"></div> */}
-      </div>
-
-      {/* Main Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-3">
-        
-        {/* Logo */}
-        <a href="#home" className="flex items-center gap-2 cursor-pointer shrink-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-red-600"></div>
-
-          <div>
-            <h1 className="text-white font-bold text-sm sm:text-lg leading-none">
-              FitMaker
-            </h1>
-
-            <p className="text-gray-400 text-[8px] sm:text-[10px] mt-1">
-              Transform Your Body
-            </p>
-          </div>
-        </a>
-
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8 text-sm cursor-pointer">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              onClick={() => setActive(item.id)}
-              className={`
-                relative pb-1 transition duration-300 active:scale-95
-
-                ${
-                  active === item.id
-                    ? "text-white"
-                    : "text-gray-300 hover:text-white"
-                }
-
-                after:absolute after:left-0 after:-bottom-1
-                after:w-full after:h-[2px]
-                after:bg-red-500
-                after:origin-left
-                after:transition-transform after:duration-300
-
-                ${
-                  active === item.id
-                    ? "after:scale-x-100"
-                    : "after:scale-x-0 hover:after:scale-x-100"
-                }
-              `}
-            >
-              {item.name}
-            </a>
-          ))}
-        </nav>
-
-        {/* Right Side */}
-        <div className="flex items-center gap-2 sm:gap-3">
-
-          {/* Large Device Search Icon */}
-          <button className="hidden md:flex w-10 h-10 rounded-full bg-orange-500 cursor-pointer border border-white/10 backdrop-blur-xl items-center justify-center text-white hover:bg-white/10 transition" >
-            <Search size={18} />
-          </button>
-
-          {/* Mobile Search Field */}
-          <div className="md:hidden flex items-center gap-2 bg-orange-500 text-white border border-white/10 rounded-full px-3 h-9 backdrop-blur-xl w-[130px] sm:w-[160px]">
-            <Search size={14} className="text-white shrink-0" />
-
-            <input
-              type="text"
-              placeholder="Search"
-              className="bg-transparent outline-none text-xs text-white placeholder:text-white w-full"
-            />
-          </div>
-
-          {/* Desktop Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-           <a href="#auth">
-             <button className="px-5 py-2 rounded-full border border-red-500 text-white hover:bg-red-500/20 transition cursor-pointer text-sm" >
-              Login
-            </button>
-           </a>
-
-          <a href="#auth">
-             <button className="px-5 py-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition cursor-pointer text-sm" >
-              Sign Up
-            </button>
-          </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden text-white"
-          >
-            {menuOpen ? <X size={26} /> : <Menu size={26} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile / Tablet Menu */}
-      <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-        }`}
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{
+          duration: 0.7,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className={`
+          fixed top-0 left-0 w-full z-50
+          transition-all duration-500
+          ${
+            scrolled
+              ? "bg-black/70 backdrop-blur-2xl shadow-[0_8px_35px_rgba(0,0,0,0.45)]"
+              : "bg-white/10 backdrop-blur-2xl"
+          }
+          border-b border-white/10
+        `}
       >
-        <div className="px-5 pb-6 pt-4 bg-black/40 backdrop-blur-2xl border-t border-white/10">
-          
-          {/* Mobile Nav */}
-          <nav className="flex flex-col gap-5 text-sm">
+        {/* Background Glow */}
+
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{
+              x: [0, 30, -20, 0],
+              opacity: [0.05, 0.1, 0.05],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="
+              absolute
+              -top-32
+              left-1/4
+              w-[250px]
+              h-[180px]
+              rounded-full
+              bg-red-600
+              blur-[100px]
+            "
+          />
+
+          <motion.div
+            animate={{
+              x: [0, -30, 20, 0],
+              opacity: [0.04, 0.1, 0.04],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="
+              absolute
+              -top-32
+              right-1/4
+              w-[250px]
+              h-[180px]
+              rounded-full
+              bg-orange-500
+              blur-[100px]
+            "
+          />
+        </div>
+
+        {/* ==================================================
+            MAIN HEADER
+        ================================================== */}
+
+        <div
+          className={`
+            max-w-7xl mx-auto
+            px-4 sm:px-6 lg:px-10
+            flex items-center justify-between gap-3
+            transition-all duration-500
+            ${scrolled ? "py-2.5" : "py-4"}
+          `}
+        >
+          {/* ==================================================
+              LOGO
+          ================================================== */}
+
+          <motion.a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation("home");
+            }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 cursor-pointer shrink-0"
+          >
+            {/* Logo Icon */}
+
+            <motion.div
+              animate={{
+                rotate: [0, 3, -3, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="
+                w-7 h-7
+                sm:w-8 sm:h-8
+                rounded
+                bg-red-600
+                shadow-[0_0_15px_rgba(239,68,68,0.35)]
+              "
+            />
+
+            <div>
+              <h1 className="text-white font-bold text-sm sm:text-lg leading-none">
+                FitMaker
+              </h1>
+
+              <p className="text-gray-400 text-[8px] sm:text-[10px] mt-1">
+                Transform Your Body
+              </p>
+            </div>
+          </motion.a>
+
+          {/* ==================================================
+              DESKTOP NAV
+          ================================================== */}
+
+          <nav className="hidden lg:flex items-center gap-8 text-sm">
             {navItems.map((item) => (
-              <a
+              <motion.a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={() => {
-                  setActive(item.id);
-                  setMenuOpen(false);
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigation(item.id);
                 }}
+                whileTap={{ scale: 0.95 }}
                 className={`
-                  transition duration-300 active:scale-95
-
+                  relative
+                  pb-1
+                  transition-colors
+                  duration-300
                   ${
                     active === item.id
-                      ? "text-white translate-x-2"
-                      : "text-gray-300 hover:text-white hover:translate-x-2"
+                      ? "text-white"
+                      : "text-gray-300 hover:text-white"
                   }
                 `}
               >
                 {item.name}
-              </a>
+
+                {/* Active Line */}
+
+                <motion.span
+                  className="
+                    absolute
+                    left-0
+                    -bottom-1
+                    h-[2px]
+                    bg-red-500
+                    rounded-full
+                  "
+                  initial={false}
+                  animate={{
+                    width: active === item.id ? "100%" : "0%",
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeOut",
+                  }}
+                />
+              </motion.a>
             ))}
           </nav>
 
-          {/* Mobile Buttons */}
-          <div className="flex flex-col gap-3 mt-6">
-            <button className="w-full py-3 rounded-full border border-red-500 text-white hover:bg-red-500/20 transition">
-              Login
-            </button>
+          {/* ==================================================
+              RIGHT SIDE
+          ================================================== */}
 
-            <button className="w-full py-3 rounded-full bg-red-600 text-white hover:bg-red-700 transition">
-              Sign Up
-            </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* Desktop Search */}
+
+            <motion.button
+              whileHover={{
+                scale: 1.08,
+                rotate: 5,
+              }}
+              whileTap={{
+                scale: 0.9,
+              }}
+              onClick={() => setSearchOpen(true)}
+              className="
+                hidden md:flex
+                w-10 h-10
+                rounded-full
+                bg-orange-500
+                border border-white/10
+                backdrop-blur-xl
+                items-center
+                justify-center
+                text-white
+                cursor-pointer
+                shadow-[0_0_20px_rgba(249,115,22,0.25)]
+              "
+            >
+              <Search size={18} />
+            </motion.button>
+
+            {/* Mobile Search */}
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setSearchOpen(true)}
+              className="
+                md:hidden
+                flex
+                w-9 h-9
+                rounded-full
+                bg-orange-500
+                text-white
+                items-center
+                justify-center
+              "
+            >
+              <Search size={15} />
+            </motion.button>
+
+            {/* Desktop Buttons */}
+
+            <div className="hidden md:flex items-center gap-3">
+
+              <motion.a
+                href="#auth"
+                whileHover={{
+                  y: -2,
+                  scale: 1.03,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
+                className="
+                  px-5 py-2
+                  rounded-full
+                  border border-red-500
+                  text-white
+                  hover:bg-red-500/20
+                  transition
+                  cursor-pointer
+                  text-sm
+                "
+              >
+                Login
+              </motion.a>
+
+              <motion.a
+                href="#auth"
+                whileHover={{
+                  y: -2,
+                  scale: 1.03,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
+                className="
+                  px-5 py-2
+                  rounded-full
+                  bg-red-600
+                  text-white
+                  hover:bg-red-700
+                  transition
+                  cursor-pointer
+                  text-sm
+                  shadow-[0_0_20px_rgba(239,68,68,0.15)]
+                "
+              >
+                Sign Up
+              </motion.a>
+
+            </div>
+
+            {/* Mobile Menu */}
+
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="lg:hidden text-white cursor-pointer"
+            >
+              <AnimatePresence mode="wait">
+                {menuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                  >
+                    <X size={26} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                  >
+                    <Menu size={26} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
-      </div>
-    </header>
+
+        {/* ==================================================
+            MOBILE MENU
+        ================================================== */}
+
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{
+                height: 0,
+                opacity: 0,
+              }}
+              animate={{
+                height: "auto",
+                opacity: 1,
+              }}
+              exit={{
+                height: 0,
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.35,
+                ease: "easeInOut",
+              }}
+              className="
+                lg:hidden
+                overflow-hidden
+                bg-black/60
+                backdrop-blur-2xl
+                border-t border-white/10
+              "
+            >
+              <div className="px-5 pb-6 pt-5">
+
+                {/* Mobile Navigation */}
+
+                <nav className="flex flex-col gap-2">
+
+                  {navItems.map((item, index) => (
+                    <motion.a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavigation(item.id);
+                      }}
+                      initial={{
+                        opacity: 0,
+                        x: -20,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        x: 0,
+                      }}
+                      transition={{
+                        delay: index * 0.06,
+                        duration: 0.3,
+                      }}
+                      whileTap={{
+                        scale: 0.97,
+                      }}
+                      className={`
+                        flex items-center justify-between
+                        px-4 py-3
+                        rounded-xl
+                        transition-all
+                        duration-300
+                        ${
+                          active === item.id
+                            ? "bg-red-600/15 text-white border border-red-500/20"
+                            : "text-gray-300 hover:text-white hover:bg-white/5"
+                        }
+                      `}
+                    >
+                      <span>{item.name}</span>
+
+                      {active === item.id && (
+                        <motion.span
+                          layoutId="mobileActive"
+                          className="w-2 h-2 rounded-full bg-red-500"
+                        />
+                      )}
+                    </motion.a>
+                  ))}
+
+                </nav>
+
+                {/* Mobile Buttons */}
+
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    y: 15,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.3,
+                  }}
+                  className="flex flex-col gap-3 mt-6"
+                >
+                  <motion.a
+                    href="#auth"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setMenuOpen(false)}
+                    className="
+                      w-full
+                      py-3
+                      rounded-full
+                      border border-red-500
+                      text-white
+                      hover:bg-red-500/20
+                      transition
+                      text-center
+                    "
+                  >
+                    Login
+                  </motion.a>
+
+                  <motion.a
+                    href="#auth"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setMenuOpen(false)}
+                    className="
+                      w-full
+                      py-3
+                      rounded-full
+                      bg-red-600
+                      text-white
+                      hover:bg-red-700
+                      transition
+                      text-center
+                    "
+                  >
+                    Sign Up
+                  </motion.a>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      {/* ==================================================
+          SEARCH OVERLAY
+      ================================================== */}
+
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="
+              fixed
+              inset-0
+              z-[100]
+              bg-black/80
+              backdrop-blur-xl
+              flex
+              items-start
+              justify-center
+              pt-24
+              px-4
+            "
+            onClick={() => setSearchOpen(false)}
+          >
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: -40,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: -30,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="
+                w-full
+                max-w-2xl
+              "
+            >
+              {/* Search Box */}
+
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-3
+                  bg-white/10
+                  border border-white/10
+                  backdrop-blur-2xl
+                  rounded-2xl
+                  px-5
+                  py-4
+                  shadow-[0_20px_60px_rgba(0,0,0,0.5)]
+                "
+              >
+                <Search
+                  size={22}
+                  className="text-orange-500 shrink-0"
+                />
+
+                <input
+                  autoFocus
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Search FitMaker..."
+                  className="
+                    flex-1
+                    bg-transparent
+                    outline-none
+                    text-white
+                    placeholder:text-gray-500
+                  "
+                />
+
+                <button
+                  onClick={() => {
+                    setSearchOpen(false);
+                    setSearchValue("");
+                  }}
+                  className="
+                    text-gray-400
+                    hover:text-white
+                    transition
+                    cursor-pointer
+                  "
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Search Results */}
+
+              <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-black/70 backdrop-blur-2xl">
+
+                {searchValue.length === 0 ? (
+                  <div className="p-5">
+                    <p className="text-gray-500 text-sm mb-3">
+                      Quick Navigation
+                    </p>
+
+                    {navItems.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavigation(item.id)}
+                        className="
+                          w-full
+                          flex
+                          items-center
+                          justify-between
+                          px-4
+                          py-3
+                          rounded-xl
+                          text-gray-300
+                          hover:text-white
+                          hover:bg-white/5
+                          transition
+                          cursor-pointer
+                        "
+                      >
+                        <span>{item.name}</span>
+
+                        <ArrowRight
+                          size={16}
+                          className="text-gray-500"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                ) : filteredItems.length > 0 ? (
+                  <div className="p-3">
+                    {filteredItems.map((item) => (
+                      <motion.button
+                        key={item.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        onClick={() => handleNavigation(item.id)}
+                        className="
+                          w-full
+                          flex
+                          items-center
+                          justify-between
+                          px-4
+                          py-3
+                          rounded-xl
+                          text-gray-300
+                          hover:text-white
+                          hover:bg-red-500/10
+                          transition
+                          cursor-pointer
+                        "
+                      >
+                        <span>{item.name}</span>
+
+                        <ArrowRight
+                          size={16}
+                          className="text-red-500"
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 text-center">
+                    <p className="text-gray-400 text-sm">
+                      No results found
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Search Hint */}
+
+              <p className="text-gray-500 text-xs text-center mt-4">
+                Press <span className="text-gray-300">ESC</span> to close
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

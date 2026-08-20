@@ -40,7 +40,7 @@ const TrainersSection = () => {
   return (
     <section className="relative overflow-hidden lg:overflow-visible py-24 text-white">
       {/* Glow */}
-      <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px]" />
+      <div className="absolute lg:right-0 lg:top-0 h-72 w-72 rounded-full bg-orange-500 blur-[120px] top-60 right-[-100px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         
@@ -86,7 +86,7 @@ const TrainersSection = () => {
                 <img
                   src={trainer.image}
                   alt={trainer.name}
-                  className="h-[320px] w-full object-cover transition duration-500 group-hover:scale-110"
+                  className="h-[390px] w-full object-cover transition duration-500 group-hover:scale-110"
                 />
               </div>
 
