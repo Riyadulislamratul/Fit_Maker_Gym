@@ -3,3 +3,33 @@
 html {
   scroll-behavior: smooth;
 }
+
+html,
+body {
+  cursor: none;
+}
+
+button,
+a,
+input,
+textarea,
+select,
+[role="button"] {
+  cursor: none;
+}
+
+@media (max-width: 1023px) {
+  html,
+  body {
+    cursor: auto;
+  }
+
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  [role="button"] {
+    cursor: auto;
+  }
+}

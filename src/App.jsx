@@ -13,10 +13,12 @@ import AuthSection from './components/AuthSection'
 import FaqSection from './components/FaqSection'
 import BlogPostsSection from './components/BlogPostsSection'
 import LoadingScreen from './components/LoadingScreen'
+import CustomCursor from './components/CustomCursor'
 
 const App = () => {
   return (
     <div className='bg-[#0f0f0f]'>
+      <CustomCursor />
       <LoadingScreen />
       <Header />
       <Hero  />
