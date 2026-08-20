@@ -12,10 +12,12 @@ import CommunitySection from './components/CommunitySection'
 import AuthSection from './components/AuthSection'
 import FaqSection from './components/FaqSection'
 import BlogPostsSection from './components/BlogPostsSection'
+import LoadingScreen from './components/LoadingScreen'
 
 const App = () => {
   return (
     <div className='bg-[#0f0f0f]'>
+      <LoadingScreen />
       <Header />
       <Hero  />
       <StatsSection />
