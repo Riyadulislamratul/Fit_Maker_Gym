@@ -7,8 +7,6 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [scrolled, setScrolled] = useState(false);
-
-  // Active section
   const [active, setActive] = useState("home");
 
   const navItems = [
@@ -19,44 +17,50 @@ const Header = () => {
     { name: "About Us", id: "about" },
   ];
 
-  // --------------------------------------------------
-  // Scroll Detection
-  // --------------------------------------------------
+  // =====================================================
+  // SCROLL DETECTION
+  // =====================================================
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // --------------------------------------------------
-  // Detect Active Section
-  // --------------------------------------------------
+  // =====================================================
+  // ACTIVE SECTION DETECTION
+  // =====================================================
 
   useEffect(() => {
     const sections = navItems
       .map((item) => document.getElementById(item.id))
       .filter(Boolean);
 
+    if (!sections.length) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleSection = entries.find(
-          (entry) => entry.isIntersecting
-        );
+        const visibleSections = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-        if (visibleSection) {
-          setActive(visibleSection.target.id);
+        if (visibleSections.length > 0) {
+          setActive(visibleSections[0].target.id);
         }
       },
       {
-        threshold: 0.25,
-        rootMargin: "-100px 0px -50% 0px",
+        threshold: [0.2, 0.4, 0.6],
+        rootMargin: "-90px 0px -40% 0px",
       }
     );
 
@@ -65,9 +69,9 @@ const Header = () => {
     return () => observer.disconnect();
   }, []);
 
-  // --------------------------------------------------
-  // Close menus with Escape
-  // --------------------------------------------------
+  // =====================================================
+  // ESCAPE KEY
+  // =====================================================
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -85,9 +89,9 @@ const Header = () => {
     };
   }, []);
 
-  // --------------------------------------------------
-  // Prevent body scrolling when menu/search is open
-  // --------------------------------------------------
+  // =====================================================
+  // BODY SCROLL LOCK
+  // =====================================================
 
   useEffect(() => {
     if (menuOpen || searchOpen) {
@@ -101,9 +105,27 @@ const Header = () => {
     };
   }, [menuOpen, searchOpen]);
 
-  // --------------------------------------------------
-  // Smooth Scroll
-  // --------------------------------------------------
+  // =====================================================
+  // CLOSE MOBILE MENU WHEN SCREEN BECOMES DESKTOP
+  // =====================================================
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // =====================================================
+  // NAVIGATION
+  // =====================================================
 
   const handleNavigation = (id) => {
     const section = document.getElementById(id);
@@ -121,13 +143,17 @@ const Header = () => {
     setSearchValue("");
   };
 
-  // --------------------------------------------------
-  // Search
-  // --------------------------------------------------
+  // =====================================================
+  // SEARCH
+  // =====================================================
 
   const filteredItems = navItems.filter((item) =>
     item.name.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <>
@@ -136,30 +162,46 @@ const Header = () => {
       ================================================== */}
 
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={{
+          y: -100,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
         transition={{
           duration: 0.7,
           ease: [0.22, 1, 0.36, 1],
         }}
         className={`
-          fixed top-0 left-0 w-full z-50
-          transition-all duration-500
+          fixed
+          top-0
+          left-0
+          w-full
+          z-50
+          border-b
+          border-white/10
+          transition-all
+          duration-500
+
           ${
             scrolled
-              ? "bg-black/70 backdrop-blur-2xl shadow-[0_8px_35px_rgba(0,0,0,0.45)]"
-              : "bg-white/10 backdrop-blur-2xl"
+              ? "bg-black/80 backdrop-blur-2xl shadow-[0_8px_35px_rgba(0,0,0,0.45)]"
+              : "bg-black/30 backdrop-blur-xl"
           }
-          border-b border-white/10
         `}
       >
-        {/* Background Glow */}
+        {/* ==================================================
+            HEADER BACKGROUND GLOW
+        ================================================== */}
 
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
           <motion.div
             animate={{
               x: [0, 30, -20, 0],
-              opacity: [0.05, 0.1, 0.05],
+              opacity: [0.04, 0.09, 0.04],
+              scale: [1, 1.1, 1],
             }}
             transition={{
               duration: 8,
@@ -169,19 +211,24 @@ const Header = () => {
             className="
               absolute
               -top-32
-              left-1/4
-              w-[250px]
-              h-[180px]
+              left-[10%]
+              sm:left-1/4
+              w-[180px]
+              sm:w-[250px]
+              h-[140px]
+              sm:h-[180px]
               rounded-full
               bg-red-600
-              blur-[100px]
+              blur-[90px]
+              sm:blur-[100px]
             "
           />
 
           <motion.div
             animate={{
               x: [0, -30, 20, 0],
-              opacity: [0.04, 0.1, 0.04],
+              opacity: [0.03, 0.08, 0.03],
+              scale: [1, 1.1, 1],
             }}
             transition={{
               duration: 10,
@@ -191,48 +238,75 @@ const Header = () => {
             className="
               absolute
               -top-32
-              right-1/4
-              w-[250px]
-              h-[180px]
+              right-[5%]
+              sm:right-1/4
+              w-[180px]
+              sm:w-[250px]
+              h-[140px]
+              sm:h-[180px]
               rounded-full
               bg-orange-500
-              blur-[100px]
+              blur-[90px]
+              sm:blur-[100px]
             "
           />
         </div>
 
         {/* ==================================================
-            MAIN HEADER
+            MAIN HEADER CONTAINER
         ================================================== */}
 
         <div
           className={`
-            max-w-7xl mx-auto
-            px-4 sm:px-6 lg:px-10
-            flex items-center justify-between gap-3
-            transition-all duration-500
-            ${scrolled ? "py-2.5" : "py-4"}
+            mx-auto
+            w-full
+            max-w-7xl
+            px-4
+            sm:px-6
+            md:px-8
+            lg:px-10
+
+            flex
+            items-center
+            justify-between
+            gap-3
+
+            transition-all
+            duration-500
+
+            ${scrolled ? "py-2.5" : "py-3 sm:py-4"}
           `}
         >
           {/* ==================================================
               LOGO
           ================================================== */}
 
-          <motion.a
-            href="#home"
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavigation("home");
+          <motion.button
+            type="button"
+            onClick={() => handleNavigation("home")}
+            whileHover={{
+              scale: 1.03,
             }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 cursor-pointer shrink-0"
+            whileTap={{
+              scale: 0.95,
+            }}
+            className="
+              flex
+              items-center
+              gap-2
+              cursor-pointer
+              shrink-0
+              text-left
+              outline-none
+            "
+            aria-label="Go to homepage"
           >
             {/* Logo Icon */}
 
             <motion.div
               animate={{
                 rotate: [0, 3, -3, 0],
+                scale: [1, 1.03, 1],
               }}
               transition={{
                 duration: 4,
@@ -240,44 +314,69 @@ const Header = () => {
                 ease: "easeInOut",
               }}
               className="
-                w-7 h-7
-                sm:w-8 sm:h-8
-                rounded
+                w-7
+                h-7
+                sm:w-8
+                sm:h-8
+                rounded-lg
                 bg-red-600
                 shadow-[0_0_15px_rgba(239,68,68,0.35)]
+                shrink-0
               "
             />
 
-            <div>
-              <h1 className="text-white font-bold text-sm sm:text-lg leading-none">
+            <div className="min-w-0">
+              <h1
+                className="
+                  text-white
+                  font-bold
+                  text-sm
+                  sm:text-lg
+                  leading-none
+                  truncate
+                "
+              >
                 FitMaker
               </h1>
 
-              <p className="text-gray-400 text-[8px] sm:text-[10px] mt-1">
+              <p
+                className="
+                  text-gray-400
+                  text-[7px]
+                  sm:text-[10px]
+                  mt-1
+                  tracking-wide
+                  truncate
+                "
+              >
                 Transform Your Body
               </p>
             </div>
-          </motion.a>
+          </motion.button>
 
           {/* ==================================================
-              DESKTOP NAV
+              DESKTOP NAVIGATION
+              Visible only >= 1024px
           ================================================== */}
 
-          <nav className="hidden lg:flex items-center gap-8 text-sm">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm">
             {navItems.map((item) => (
-              <motion.a
+              <motion.button
                 key={item.id}
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation(item.id);
+                type="button"
+                onClick={() => handleNavigation(item.id)}
+                whileTap={{
+                  scale: 0.95,
                 }}
-                whileTap={{ scale: 0.95 }}
                 className={`
                   relative
                   pb-1
+                  whitespace-nowrap
                   transition-colors
                   duration-300
+                  cursor-pointer
+                  outline-none
+
                   ${
                     active === item.id
                       ? "text-white"
@@ -307,7 +406,7 @@ const Header = () => {
                     ease: "easeOut",
                   }}
                 />
-              </motion.a>
+              </motion.button>
             ))}
           </nav>
 
@@ -315,11 +414,14 @@ const Header = () => {
               RIGHT SIDE
           ================================================== */}
 
-          <div className="flex items-center gap-2 sm:gap-3">
-
-            {/* Desktop Search */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* ==================================================
+                SEARCH BUTTON
+                Available on all screen sizes
+            ================================================== */}
 
             <motion.button
+              type="button"
               whileHover={{
                 scale: 1.08,
                 rotate: 5,
@@ -329,47 +431,44 @@ const Header = () => {
               }}
               onClick={() => setSearchOpen(true)}
               className="
-                hidden md:flex
-                w-10 h-10
-                rounded-full
-                bg-orange-500
-                border border-white/10
-                backdrop-blur-xl
+                flex
                 items-center
                 justify-center
+
+                w-9
+                h-9
+                sm:w-10
+                sm:h-10
+
+                rounded-full
+                bg-orange-500
+                border
+                border-white/10
+
                 text-white
                 cursor-pointer
+
                 shadow-[0_0_20px_rgba(249,115,22,0.25)]
+
+                outline-none
               "
+              aria-label="Open search"
             >
-              <Search size={18} />
+              <Search
+                size={16}
+                className="sm:w-[18px] sm:h-[18px]"
+              />
             </motion.button>
 
-            {/* Mobile Search */}
+            {/* ==================================================
+                DESKTOP AUTH BUTTONS
+                Visible only >= 1024px
+            ================================================== */}
 
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setSearchOpen(true)}
-              className="
-                md:hidden
-                flex
-                w-9 h-9
-                rounded-full
-                bg-orange-500
-                text-white
-                items-center
-                justify-center
-              "
-            >
-              <Search size={15} />
-            </motion.button>
-
-            {/* Desktop Buttons */}
-
-            <div className="hidden md:flex items-center gap-3">
-
-              <motion.a
-                href="#auth"
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3">
+              <motion.button
+                type="button"
+                onClick={() => handleNavigation("auth")}
                 whileHover={{
                   y: -2,
                   scale: 1.03,
@@ -378,21 +477,31 @@ const Header = () => {
                   scale: 0.95,
                 }}
                 className="
-                  px-5 py-2
+                  px-4
+                  xl:px-5
+                  py-2
+
                   rounded-full
-                  border border-red-500
+                  border
+                  border-red-500
+
                   text-white
                   hover:bg-red-500/20
+
                   transition
+                  duration-300
+
                   cursor-pointer
                   text-sm
+                  whitespace-nowrap
                 "
               >
                 Login
-              </motion.a>
+              </motion.button>
 
-              <motion.a
-                href="#auth"
+              <motion.button
+                type="button"
+                onClick={() => handleNavigation("auth")}
                 whileHover={{
                   y: -2,
                   scale: 1.03,
@@ -401,47 +510,108 @@ const Header = () => {
                   scale: 0.95,
                 }}
                 className="
-                  px-5 py-2
+                  px-4
+                  xl:px-5
+                  py-2
+
                   rounded-full
                   bg-red-600
+
                   text-white
                   hover:bg-red-700
+
                   transition
+                  duration-300
+
                   cursor-pointer
                   text-sm
+                  whitespace-nowrap
+
                   shadow-[0_0_20px_rgba(239,68,68,0.15)]
                 "
               >
                 Sign Up
-              </motion.a>
-
+              </motion.button>
             </div>
 
-            {/* Mobile Menu */}
+            {/* ==================================================
+                MOBILE / TABLET MENU
+                Visible below 1024px
+            ================================================== */}
 
             <motion.button
-              whileTap={{ scale: 0.85 }}
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden text-white cursor-pointer"
+              type="button"
+              whileTap={{
+                scale: 0.85,
+              }}
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="
+                lg:hidden
+                flex
+                items-center
+                justify-center
+
+                w-9
+                h-9
+                sm:w-10
+                sm:h-10
+
+                rounded-full
+
+                text-white
+                cursor-pointer
+
+                hover:bg-white/10
+
+                transition
+
+                outline-none
+              "
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
             >
               <AnimatePresence mode="wait">
                 {menuOpen ? (
                   <motion.div
                     key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
+                    initial={{
+                      rotate: -90,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      rotate: 0,
+                      opacity: 1,
+                    }}
+                    exit={{
+                      rotate: 90,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 0.2,
+                    }}
                   >
-                    <X size={26} />
+                    <X size={24} />
                   </motion.div>
                 ) : (
                   <motion.div
                     key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
+                    initial={{
+                      rotate: 90,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      rotate: 0,
+                      opacity: 1,
+                    }}
+                    exit={{
+                      rotate: -90,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 0.2,
+                    }}
                   >
-                    <Menu size={26} />
+                    <Menu size={24} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -450,7 +620,7 @@ const Header = () => {
         </div>
 
         {/* ==================================================
-            MOBILE MENU
+            MOBILE / TABLET MENU
         ================================================== */}
 
         <AnimatePresence>
@@ -475,28 +645,39 @@ const Header = () => {
               className="
                 lg:hidden
                 overflow-hidden
-                bg-black/60
+
+                bg-black/85
                 backdrop-blur-2xl
-                border-t border-white/10
+
+                border-t
+                border-white/10
               "
             >
-              <div className="px-5 pb-6 pt-5">
+              <div
+                className="
+                  mx-auto
+                  w-full
+                  max-w-7xl
 
+                  px-4
+                  sm:px-6
+                  md:px-8
+
+                  py-5
+                  sm:py-6
+                "
+              >
                 {/* Mobile Navigation */}
 
                 <nav className="flex flex-col gap-2">
-
                   {navItems.map((item, index) => (
-                    <motion.a
+                    <motion.button
                       key={item.id}
-                      href={`#${item.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleNavigation(item.id);
-                      }}
+                      type="button"
+                      onClick={() => handleNavigation(item.id)}
                       initial={{
                         opacity: 0,
-                        x: -20,
+                        x: -25,
                       }}
                       animate={{
                         opacity: 1,
@@ -506,15 +687,31 @@ const Header = () => {
                         delay: index * 0.06,
                         duration: 0.3,
                       }}
+                      whileHover={{
+                        x: 4,
+                      }}
                       whileTap={{
                         scale: 0.97,
                       }}
                       className={`
-                        flex items-center justify-between
-                        px-4 py-3
+                        w-full
+                        flex
+                        items-center
+                        justify-between
+
+                        px-4
+                        py-3.5
+                        sm:py-4
+
                         rounded-xl
+
                         transition-all
                         duration-300
+
+                        text-left
+
+                        cursor-pointer
+
                         ${
                           active === item.id
                             ? "bg-red-600/15 text-white border border-red-500/20"
@@ -522,20 +719,27 @@ const Header = () => {
                         }
                       `}
                     >
-                      <span>{item.name}</span>
+                      <span className="text-sm sm:text-base">
+                        {item.name}
+                      </span>
 
                       {active === item.id && (
                         <motion.span
                           layoutId="mobileActive"
-                          className="w-2 h-2 rounded-full bg-red-500"
+                          className="
+                            w-2
+                            h-2
+                            rounded-full
+                            bg-red-500
+                            shadow-[0_0_10px_rgba(239,68,68,0.8)]
+                          "
                         />
                       )}
-                    </motion.a>
+                    </motion.button>
                   ))}
-
                 </nav>
 
-                {/* Mobile Buttons */}
+                {/* Mobile Auth Buttons */}
 
                 <motion.div
                   initial={{
@@ -549,43 +753,68 @@ const Header = () => {
                   transition={{
                     delay: 0.3,
                   }}
-                  className="flex flex-col gap-3 mt-6"
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    gap-3
+                    mt-6
+                  "
                 >
-                  <motion.a
-                    href="#auth"
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setMenuOpen(false)}
+                  <motion.button
+                    type="button"
+                    whileTap={{
+                      scale: 0.97,
+                    }}
+                    onClick={() => handleNavigation("auth")}
                     className="
                       w-full
                       py-3
+
                       rounded-full
-                      border border-red-500
+                      border
+                      border-red-500
+
                       text-white
+
                       hover:bg-red-500/20
+
                       transition
+
+                      text-sm
                       text-center
+                      cursor-pointer
                     "
                   >
                     Login
-                  </motion.a>
+                  </motion.button>
 
-                  <motion.a
-                    href="#auth"
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setMenuOpen(false)}
+                  <motion.button
+                    type="button"
+                    whileTap={{
+                      scale: 0.97,
+                    }}
+                    onClick={() => handleNavigation("auth")}
                     className="
                       w-full
                       py-3
+
                       rounded-full
                       bg-red-600
+
                       text-white
+
                       hover:bg-red-700
+
                       transition
+
+                      text-sm
                       text-center
+                      cursor-pointer
                     "
                   >
                     Sign Up
-                  </motion.a>
+                  </motion.button>
                 </motion.div>
               </div>
             </motion.div>
@@ -600,20 +829,33 @@ const Header = () => {
       <AnimatePresence>
         {searchOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
             className="
               fixed
               inset-0
               z-[100]
-              bg-black/80
+
+              bg-black/85
               backdrop-blur-xl
+
               flex
               items-start
               justify-center
-              pt-24
-              px-4
+
+              pt-20
+              sm:pt-24
+              md:pt-28
+
+              px-3
+              sm:px-5
             "
             onClick={() => setSearchOpen(false)}
           >
@@ -648,36 +890,67 @@ const Header = () => {
                 className="
                   flex
                   items-center
-                  gap-3
+                  gap-2
+                  sm:gap-3
+
                   bg-white/10
-                  border border-white/10
+                  border
+                  border-white/10
+
                   backdrop-blur-2xl
-                  rounded-2xl
-                  px-5
-                  py-4
+
+                  rounded-xl
+                  sm:rounded-2xl
+
+                  px-3
+                  sm:px-5
+
+                  py-3
+                  sm:py-4
+
                   shadow-[0_20px_60px_rgba(0,0,0,0.5)]
                 "
               >
                 <Search
-                  size={22}
-                  className="text-orange-500 shrink-0"
+                  size={20}
+                  className="
+                    text-orange-500
+                    shrink-0
+                    sm:w-[22px]
+                    sm:h-[22px]
+                  "
                 />
 
                 <input
                   autoFocus
+                  type="text"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   placeholder="Search FitMaker..."
                   className="
                     flex-1
+                    min-w-0
+
                     bg-transparent
                     outline-none
+
                     text-white
+
+                    text-sm
+                    sm:text-base
+
                     placeholder:text-gray-500
                   "
                 />
 
-                <button
+                <motion.button
+                  type="button"
+                  whileHover={{
+                    rotate: 90,
+                  }}
+                  whileTap={{
+                    scale: 0.85,
+                  }}
                   onClick={() => {
                     setSearchOpen(false);
                     setSearchValue("");
@@ -687,95 +960,203 @@ const Header = () => {
                     hover:text-white
                     transition
                     cursor-pointer
+                    shrink-0
                   "
+                  aria-label="Close search"
                 >
                   <X size={20} />
-                </button>
+                </motion.button>
               </div>
 
               {/* Search Results */}
 
-              <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-black/70 backdrop-blur-2xl">
+              <div
+                className="
+                  mt-3
+
+                  max-h-[60vh]
+                  sm:max-h-[65vh]
+
+                  overflow-y-auto
+
+                  rounded-xl
+                  sm:rounded-2xl
+
+                  border
+                  border-white/10
+
+                  bg-black/80
+                  backdrop-blur-2xl
+
+                  scrollbar-thin
+                "
+              >
+                {/* No Search */}
 
                 {searchValue.length === 0 ? (
-                  <div className="p-5">
-                    <p className="text-gray-500 text-sm mb-3">
+                  <div className="p-3 sm:p-5">
+                    <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3 px-2">
                       Quick Navigation
                     </p>
 
-                    {navItems.map((item) => (
-                      <button
+                    {navItems.map((item, index) => (
+                      <motion.button
                         key={item.id}
+                        type="button"
+                        initial={{
+                          opacity: 0,
+                          x: -10,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          delay: index * 0.04,
+                        }}
                         onClick={() => handleNavigation(item.id)}
                         className="
                           w-full
+
                           flex
                           items-center
                           justify-between
-                          px-4
+
+                          px-3
+                          sm:px-4
+
                           py-3
+                          sm:py-3.5
+
                           rounded-xl
+
                           text-gray-300
+
                           hover:text-white
                           hover:bg-white/5
+
                           transition
+
                           cursor-pointer
+                          text-left
                         "
                       >
-                        <span>{item.name}</span>
+                        <span className="text-sm">
+                          {item.name}
+                        </span>
 
                         <ArrowRight
                           size={16}
-                          className="text-gray-500"
+                          className="text-gray-500 shrink-0"
                         />
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 ) : filteredItems.length > 0 ? (
-                  <div className="p-3">
-                    {filteredItems.map((item) => (
+                  <div className="p-2 sm:p-3">
+                    {filteredItems.map((item, index) => (
                       <motion.button
                         key={item.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        type="button"
+                        initial={{
+                          opacity: 0,
+                          x: -10,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          delay: index * 0.05,
+                        }}
                         onClick={() => handleNavigation(item.id)}
                         className="
                           w-full
+
                           flex
                           items-center
                           justify-between
-                          px-4
+
+                          px-3
+                          sm:px-4
+
                           py-3
+                          sm:py-3.5
+
                           rounded-xl
+
                           text-gray-300
+
                           hover:text-white
                           hover:bg-red-500/10
+
                           transition
+
                           cursor-pointer
+                          text-left
                         "
                       >
-                        <span>{item.name}</span>
+                        <span className="text-sm">
+                          {item.name}
+                        </span>
 
                         <ArrowRight
                           size={16}
-                          className="text-red-500"
+                          className="text-red-500 shrink-0"
                         />
                       </motion.button>
                     ))}
                   </div>
                 ) : (
-                  <div className="p-6 text-center">
-                    <p className="text-gray-400 text-sm">
-                      No results found
-                    </p>
+                  <div className="p-8 sm:p-10 text-center">
+                    <motion.div
+                      initial={{
+                        scale: 0.8,
+                        opacity: 0,
+                      }}
+                      animate={{
+                        scale: 1,
+                        opacity: 1,
+                      }}
+                    >
+                      <Search
+                        size={28}
+                        className="
+                          mx-auto
+                          text-gray-600
+                          mb-3
+                        "
+                      />
+
+                      <p className="text-gray-400 text-sm">
+                        No results found
+                      </p>
+
+                      <p className="text-gray-600 text-xs mt-1">
+                        Try searching for another section
+                      </p>
+                    </motion.div>
                   </div>
                 )}
               </div>
 
               {/* Search Hint */}
 
-              <p className="text-gray-500 text-xs text-center mt-4">
-                Press <span className="text-gray-300">ESC</span> to close
+              <p
+                className="
+                  text-gray-500
+                  text-[10px]
+                  sm:text-xs
+                  text-center
+                  mt-3
+                  sm:mt-4
+                "
+              >
+                Press{" "}
+                <span className="text-gray-300">
+                  ESC
+                </span>{" "}
+                to close
               </p>
             </motion.div>
           </motion.div>
