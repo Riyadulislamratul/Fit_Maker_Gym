@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Search, Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const NAV_ITEMS = [
+  { name: "Home", id: "home" },
+  { name: "Services", id: "services" },
+  { name: "Membership", id: "plans" },
+  { name: "Coaching", id: "coaching" },
+  { name: "About Us", id: "about" },
+];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -9,21 +17,28 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("home");
 
-  const navItems = [
-    { name: "Home", id: "home" },
-    { name: "Services", id: "services" },
-    { name: "Membership", id: "plans" },
-    { name: "Coaching", id: "coaching" },
-    { name: "About Us", id: "about" },
-  ];
-
-  // =====================================================
-  // SCROLL DETECTION
-  // =====================================================
+  /* =========================================================
+     SCROLL DETECTION
+     Only update React when the actual state changes.
+  ========================================================= */
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      if (ticking) return;
+
+      ticking = true;
+
+      requestAnimationFrame(() => {
+        const isScrolled = window.scrollY > 30;
+
+        setScrolled((prev) =>
+          prev === isScrolled ? prev : isScrolled
+        );
+
+        ticking = false;
+      });
     };
 
     handleScroll();
@@ -37,49 +52,58 @@ const Header = () => {
     };
   }, []);
 
-  // =====================================================
-  // ACTIVE SECTION DETECTION
-  // =====================================================
+  /* =========================================================
+     ACTIVE SECTION
+  ========================================================= */
 
   useEffect(() => {
-    const sections = navItems
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean);
+    const sections = NAV_ITEMS.map((item) =>
+      document.getElementById(item.id)
+    ).filter(Boolean);
 
     if (!sections.length) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleSections = entries
+        const visible = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          .sort(
+            (a, b) =>
+              b.intersectionRatio - a.intersectionRatio
+          );
 
-        if (visibleSections.length > 0) {
-          setActive(visibleSections[0].target.id);
+        if (visible.length) {
+          const id = visible[0].target.id;
+
+          setActive((prev) =>
+            prev === id ? prev : id
+          );
         }
       },
       {
-        threshold: [0.2, 0.4, 0.6],
+        threshold: 0.4,
         rootMargin: "-90px 0px -40% 0px",
       }
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) =>
+      observer.observe(section)
+    );
 
     return () => observer.disconnect();
   }, []);
 
-  // =====================================================
-  // ESCAPE KEY
-  // =====================================================
+  /* =========================================================
+     ESCAPE KEY
+  ========================================================= */
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setMenuOpen(false);
-        setSearchOpen(false);
-        setSearchValue("");
-      }
+      if (e.key !== "Escape") return;
+
+      setMenuOpen(false);
+      setSearchOpen(false);
+      setSearchValue("");
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -89,43 +113,25 @@ const Header = () => {
     };
   }, []);
 
-  // =====================================================
-  // BODY SCROLL LOCK
-  // =====================================================
+  /* =========================================================
+     BODY SCROLL LOCK
+  ========================================================= */
 
   useEffect(() => {
-    if (menuOpen || searchOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const shouldLock = menuOpen || searchOpen;
+
+    document.body.style.overflow = shouldLock
+      ? "hidden"
+      : "";
 
     return () => {
       document.body.style.overflow = "";
     };
   }, [menuOpen, searchOpen]);
 
-  // =====================================================
-  // CLOSE MOBILE MENU WHEN SCREEN BECOMES DESKTOP
-  // =====================================================
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  // =====================================================
-  // NAVIGATION
-  // =====================================================
+  /* =========================================================
+     NAVIGATION
+  ========================================================= */
 
   const handleNavigation = (id) => {
     const section = document.getElementById(id);
@@ -143,35 +149,36 @@ const Header = () => {
     setSearchValue("");
   };
 
-  // =====================================================
-  // SEARCH
-  // =====================================================
+  /* =========================================================
+     SEARCH
+  ========================================================= */
 
-  const filteredItems = navItems.filter((item) =>
-    item.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredItems = useMemo(() => {
+    const value = searchValue.trim().toLowerCase();
 
-  // =====================================================
-  // RENDER
-  // =====================================================
+    if (!value) return NAV_ITEMS;
+
+    return NAV_ITEMS.filter((item) =>
+      item.name.toLowerCase().includes(value)
+    );
+  }, [searchValue]);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchValue("");
+  };
 
   return (
     <>
-      {/* ==================================================
+      {/* =====================================================
           HEADER
-      ================================================== */}
+      ===================================================== */}
 
       <motion.header
-        initial={{
-          y: -100,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{
-          duration: 0.7,
+          duration: 0.55,
           ease: [0.22, 1, 0.36, 1],
         }}
         className={`
@@ -182,79 +189,31 @@ const Header = () => {
           z-50
           border-b
           border-white/10
-          transition-all
-          duration-500
+          transition-[background-color,box-shadow]
+          duration-300
 
           ${
             scrolled
-              ? "bg-black/80 backdrop-blur-2xl shadow-[0_8px_35px_rgba(0,0,0,0.45)]"
-              : "bg-black/30 backdrop-blur-xl"
+              ? "bg-black/90 shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+              : "bg-black/50"
           }
         `}
       >
-        {/* ==================================================
-            HEADER BACKGROUND GLOW
-        ================================================== */}
+        {/* ===================================================
+            LIGHTWEIGHT BACKGROUND GLOW
+
+            CSS animation instead of Framer Motion.
+            Much cheaper for continuous animation.
+        =================================================== */}
 
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <motion.div
-            animate={{
-              x: [0, 30, -20, 0],
-              opacity: [0.04, 0.09, 0.04],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="
-              absolute
-              -top-32
-              left-[10%]
-              sm:left-1/4
-              w-[180px]
-              sm:w-[250px]
-              h-[140px]
-              sm:h-[180px]
-              rounded-full
-              bg-red-600
-              blur-[90px]
-              sm:blur-[100px]
-            "
-          />
-
-          <motion.div
-            animate={{
-              x: [0, -30, 20, 0],
-              opacity: [0.03, 0.08, 0.03],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="
-              absolute
-              -top-32
-              right-[5%]
-              sm:right-1/4
-              w-[180px]
-              sm:w-[250px]
-              h-[140px]
-              sm:h-[180px]
-              rounded-full
-              bg-orange-500
-              blur-[90px]
-              sm:blur-[100px]
-            "
-          />
+          <div className="header-glow header-glow-red" />
+          <div className="header-glow header-glow-orange" />
         </div>
 
-        {/* ==================================================
-            MAIN HEADER CONTAINER
-        ================================================== */}
+        {/* ===================================================
+            MAIN CONTAINER
+        =================================================== */}
 
         <div
           className={`
@@ -271,26 +230,25 @@ const Header = () => {
             justify-between
             gap-3
 
-            transition-all
-            duration-500
+            transition-[padding]
+            duration-300
 
-            ${scrolled ? "py-2.5" : "py-3 sm:py-4"}
+            ${
+              scrolled
+                ? "py-2.5"
+                : "py-3 sm:py-4"
+            }
           `}
         >
-          {/* ==================================================
+          {/* =================================================
               LOGO
-          ================================================== */}
+          ================================================= */}
 
-          <motion.button
+          <button
             type="button"
             onClick={() => handleNavigation("home")}
-            whileHover={{
-              scale: 1.03,
-            }}
-            whileTap={{
-              scale: 0.95,
-            }}
             className="
+              group
               flex
               items-center
               gap-2
@@ -303,25 +261,20 @@ const Header = () => {
           >
             {/* Logo Icon */}
 
-            <motion.div
-              animate={{
-                rotate: [0, 3, -3, 0],
-                scale: [1, 1.03, 1],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+            <div
               className="
+                header-logo
                 w-7
                 h-7
                 sm:w-8
                 sm:h-8
                 rounded-lg
                 bg-red-600
-                shadow-[0_0_15px_rgba(239,68,68,0.35)]
                 shrink-0
+                shadow-[0_0_12px_rgba(239,68,68,0.3)]
+                transition-transform
+                duration-300
+                group-hover:scale-105
               "
             />
 
@@ -352,83 +305,76 @@ const Header = () => {
                 Transform Your Body
               </p>
             </div>
-          </motion.button>
+          </button>
 
-          {/* ==================================================
+          {/* =================================================
               DESKTOP NAVIGATION
-              Visible only >= 1024px
-          ================================================== */}
+          ================================================= */}
 
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm">
-            {navItems.map((item) => (
-              <motion.button
-                key={item.id}
-                type="button"
-                onClick={() => handleNavigation(item.id)}
-                whileTap={{
-                  scale: 0.95,
-                }}
-                className={`
-                  relative
-                  pb-1
-                  whitespace-nowrap
-                  transition-colors
-                  duration-300
-                  cursor-pointer
-                  outline-none
+            {NAV_ITEMS.map((item) => {
+              const isActive = active === item.id;
 
-                  ${
-                    active === item.id
-                      ? "text-white"
-                      : "text-gray-300 hover:text-white"
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() =>
+                    handleNavigation(item.id)
                   }
-                `}
-              >
-                {item.name}
+                  className={`
+                    group
+                    relative
+                    pb-1
+                    whitespace-nowrap
+                    cursor-pointer
+                    outline-none
+                    transition-colors
+                    duration-200
 
-                {/* Active Line */}
+                    ${
+                      isActive
+                        ? "text-white"
+                        : "text-gray-300 hover:text-white"
+                    }
+                  `}
+                >
+                  {item.name}
 
-                <motion.span
-                  className="
-                    absolute
-                    left-0
-                    -bottom-1
-                    h-[2px]
-                    bg-red-500
-                    rounded-full
-                  "
-                  initial={false}
-                  animate={{
-                    width: active === item.id ? "100%" : "0%",
-                  }}
-                  transition={{
-                    duration: 0.3,
-                    ease: "easeOut",
-                  }}
-                />
-              </motion.button>
-            ))}
+                  {/* CSS active line */}
+
+                  <span
+                    className={`
+                      absolute
+                      left-0
+                      -bottom-1
+                      h-[2px]
+                      rounded-full
+                      bg-red-500
+                      transition-[width]
+                      duration-200
+
+                      ${
+                        isActive
+                          ? "w-full"
+                          : "w-0 group-hover:w-full"
+                      }
+                    `}
+                  />
+                </button>
+              );
+            })}
           </nav>
 
-          {/* ==================================================
+          {/* =================================================
               RIGHT SIDE
-          ================================================== */}
+          ================================================= */}
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* ==================================================
-                SEARCH BUTTON
-                Available on all screen sizes
-            ================================================== */}
+            {/* Search */}
 
-            <motion.button
+            <button
               type="button"
-              whileHover={{
-                scale: 1.08,
-                rotate: 5,
-              }}
-              whileTap={{
-                scale: 0.9,
-              }}
               onClick={() => setSearchOpen(true)}
               className="
                 flex
@@ -448,7 +394,14 @@ const Header = () => {
                 text-white
                 cursor-pointer
 
-                shadow-[0_0_20px_rgba(249,115,22,0.25)]
+                shadow-[0_0_14px_rgba(249,115,22,0.2)]
+
+                transition-transform
+                duration-200
+
+                hover:scale-105
+                hover:rotate-3
+                active:scale-95
 
                 outline-none
               "
@@ -458,95 +411,87 @@ const Header = () => {
                 size={16}
                 className="sm:w-[18px] sm:h-[18px]"
               />
-            </motion.button>
+            </button>
 
-            {/* ==================================================
-                DESKTOP AUTH BUTTONS
-                Visible only >= 1024px
-            ================================================== */}
+            {/* =================================================
+                DESKTOP AUTH
+            ================================================= */}
 
             <div className="hidden lg:flex items-center gap-2 xl:gap-3">
-              <motion.button
+              <button
                 type="button"
-                onClick={() => handleNavigation("auth")}
-                whileHover={{
-                  y: -2,
-                  scale: 1.03,
-                }}
-                whileTap={{
-                  scale: 0.95,
-                }}
+                onClick={() =>
+                  handleNavigation("auth")
+                }
                 className="
                   px-4
                   xl:px-5
                   py-2
-
                   rounded-full
+
                   border
                   border-red-500
 
                   text-white
+                  text-sm
+                  whitespace-nowrap
+
                   hover:bg-red-500/20
 
                   transition
-                  duration-300
+                  duration-200
 
                   cursor-pointer
-                  text-sm
-                  whitespace-nowrap
+                  active:scale-95
                 "
               >
                 Login
-              </motion.button>
+              </button>
 
-              <motion.button
+              <button
                 type="button"
-                onClick={() => handleNavigation("auth")}
-                whileHover={{
-                  y: -2,
-                  scale: 1.03,
-                }}
-                whileTap={{
-                  scale: 0.95,
-                }}
+                onClick={() =>
+                  handleNavigation("auth")
+                }
                 className="
                   px-4
                   xl:px-5
                   py-2
-
                   rounded-full
+
                   bg-red-600
-
                   text-white
-                  hover:bg-red-700
-
-                  transition
-                  duration-300
-
-                  cursor-pointer
                   text-sm
                   whitespace-nowrap
 
-                  shadow-[0_0_20px_rgba(239,68,68,0.15)]
+                  hover:bg-red-700
+                  hover:-translate-y-0.5
+
+                  transition
+                  duration-200
+
+                  cursor-pointer
+                  active:scale-95
+
+                  shadow-[0_0_14px_rgba(239,68,68,0.15)]
                 "
               >
                 Sign Up
-              </motion.button>
+              </button>
             </div>
 
-            {/* ==================================================
-                MOBILE / TABLET MENU
-                Visible below 1024px
-            ================================================== */}
+            {/* =================================================
+                MOBILE MENU BUTTON
+            ================================================= */}
 
-            <motion.button
+            <button
               type="button"
-              whileTap={{
-                scale: 0.85,
-              }}
-              onClick={() => setMenuOpen((prev) => !prev)}
+              onClick={() =>
+                setMenuOpen((prev) => !prev)
+              }
               className="
                 lg:hidden
+
                 flex
                 items-center
                 justify-center
@@ -557,100 +502,61 @@ const Header = () => {
                 sm:h-10
 
                 rounded-full
-
                 text-white
-                cursor-pointer
 
                 hover:bg-white/10
 
                 transition
+                duration-200
+
+                active:scale-90
 
                 outline-none
               "
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={
+                menuOpen
+                  ? "Close menu"
+                  : "Open menu"
+              }
               aria-expanded={menuOpen}
             >
-              <AnimatePresence mode="wait">
-                {menuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{
-                      rotate: -90,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      rotate: 0,
-                      opacity: 1,
-                    }}
-                    exit={{
-                      rotate: 90,
-                      opacity: 0,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                    }}
-                  >
-                    <X size={24} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{
-                      rotate: 90,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      rotate: 0,
-                      opacity: 1,
-                    }}
-                    exit={{
-                      rotate: -90,
-                      opacity: 0,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                    }}
-                  >
-                    <Menu size={24} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+              {menuOpen ? (
+                <X size={24} />
+              ) : (
+                <Menu size={24} />
+              )}
+            </button>
           </div>
         </div>
 
-        {/* ==================================================
-            MOBILE / TABLET MENU
-        ================================================== */}
+        {/* ===================================================
+            MOBILE MENU
+        =================================================== */}
 
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {menuOpen && (
             <motion.div
               initial={{
-                height: 0,
                 opacity: 0,
+                y: -8,
               }}
               animate={{
-                height: "auto",
                 opacity: 1,
+                y: 0,
               }}
               exit={{
-                height: 0,
                 opacity: 0,
+                y: -8,
               }}
               transition={{
-                duration: 0.35,
-                ease: "easeInOut",
+                duration: 0.2,
               }}
               className="
                 lg:hidden
-                overflow-hidden
-
-                bg-black/85
-                backdrop-blur-2xl
-
                 border-t
                 border-white/10
+                bg-black/95
+                overflow-hidden
               "
             >
               <div
@@ -670,89 +576,66 @@ const Header = () => {
                 {/* Mobile Navigation */}
 
                 <nav className="flex flex-col gap-2">
-                  {navItems.map((item, index) => (
-                    <motion.button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleNavigation(item.id)}
-                      initial={{
-                        opacity: 0,
-                        x: -25,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        x: 0,
-                      }}
-                      transition={{
-                        delay: index * 0.06,
-                        duration: 0.3,
-                      }}
-                      whileHover={{
-                        x: 4,
-                      }}
-                      whileTap={{
-                        scale: 0.97,
-                      }}
-                      className={`
-                        w-full
-                        flex
-                        items-center
-                        justify-between
+                  {NAV_ITEMS.map((item) => {
+                    const isActive =
+                      active === item.id;
 
-                        px-4
-                        py-3.5
-                        sm:py-4
-
-                        rounded-xl
-
-                        transition-all
-                        duration-300
-
-                        text-left
-
-                        cursor-pointer
-
-                        ${
-                          active === item.id
-                            ? "bg-red-600/15 text-white border border-red-500/20"
-                            : "text-gray-300 hover:text-white hover:bg-white/5"
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() =>
+                          handleNavigation(item.id)
                         }
-                      `}
-                    >
-                      <span className="text-sm sm:text-base">
-                        {item.name}
-                      </span>
+                        className={`
+                          w-full
+                          flex
+                          items-center
+                          justify-between
 
-                      {active === item.id && (
-                        <motion.span
-                          layoutId="mobileActive"
-                          className="
-                            w-2
-                            h-2
-                            rounded-full
-                            bg-red-500
-                            shadow-[0_0_10px_rgba(239,68,68,0.8)]
-                          "
-                        />
-                      )}
-                    </motion.button>
-                  ))}
+                          px-4
+                          py-3.5
+                          sm:py-4
+
+                          rounded-xl
+
+                          text-left
+
+                          transition
+                          duration-200
+
+                          cursor-pointer
+
+                          ${
+                            isActive
+                              ? "bg-red-600/15 text-white border border-red-500/20"
+                              : "text-gray-300 hover:text-white hover:bg-white/5"
+                          }
+                        `}
+                      >
+                        <span className="text-sm sm:text-base">
+                          {item.name}
+                        </span>
+
+                        {isActive && (
+                          <span
+                            className="
+                              w-2
+                              h-2
+                              rounded-full
+                              bg-red-500
+                              shadow-[0_0_8px_rgba(239,68,68,0.6)]
+                            "
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </nav>
 
-                {/* Mobile Auth Buttons */}
+                {/* Mobile Auth */}
 
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: 15,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: 0.3,
-                  }}
+                <div
                   className="
                     grid
                     grid-cols-1
@@ -761,12 +644,11 @@ const Header = () => {
                     mt-6
                   "
                 >
-                  <motion.button
+                  <button
                     type="button"
-                    whileTap={{
-                      scale: 0.97,
-                    }}
-                    onClick={() => handleNavigation("auth")}
+                    onClick={() =>
+                      handleNavigation("auth")
+                    }
                     className="
                       w-full
                       py-3
@@ -776,25 +658,25 @@ const Header = () => {
                       border-red-500
 
                       text-white
+                      text-sm
+                      text-center
 
                       hover:bg-red-500/20
 
                       transition
+                      duration-200
 
-                      text-sm
-                      text-center
-                      cursor-pointer
+                      active:scale-[0.98]
                     "
                   >
                     Login
-                  </motion.button>
+                  </button>
 
-                  <motion.button
+                  <button
                     type="button"
-                    whileTap={{
-                      scale: 0.97,
-                    }}
-                    onClick={() => handleNavigation("auth")}
+                    onClick={() =>
+                      handleNavigation("auth")
+                    }
                     className="
                       w-full
                       py-3
@@ -803,48 +685,43 @@ const Header = () => {
                       bg-red-600
 
                       text-white
+                      text-sm
+                      text-center
 
                       hover:bg-red-700
 
                       transition
+                      duration-200
 
-                      text-sm
-                      text-center
-                      cursor-pointer
+                      active:scale-[0.98]
                     "
                   >
                     Sign Up
-                  </motion.button>
-                </motion.div>
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.header>
 
-      {/* ==================================================
+      {/* =====================================================
           SEARCH OVERLAY
-      ================================================== */}
+      ===================================================== */}
 
       <AnimatePresence>
         {searchOpen && (
           <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="
               fixed
               inset-0
               z-[100]
 
-              bg-black/85
-              backdrop-blur-xl
+              bg-black/90
 
               flex
               items-start
@@ -857,13 +734,13 @@ const Header = () => {
               px-3
               sm:px-5
             "
-            onClick={() => setSearchOpen(false)}
+            onClick={closeSearch}
           >
             <motion.div
               initial={{
                 opacity: 0,
-                y: -40,
-                scale: 0.95,
+                y: -20,
+                scale: 0.98,
               }}
               animate={{
                 opacity: 1,
@@ -872,13 +749,15 @@ const Header = () => {
               }}
               exit={{
                 opacity: 0,
-                y: -30,
-                scale: 0.95,
+                y: -15,
+                scale: 0.98,
               }}
               transition={{
-                duration: 0.3,
+                duration: 0.2,
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) =>
+                e.stopPropagation()
+              }
               className="
                 w-full
                 max-w-2xl
@@ -897,8 +776,6 @@ const Header = () => {
                   border
                   border-white/10
 
-                  backdrop-blur-2xl
-
                   rounded-xl
                   sm:rounded-2xl
 
@@ -908,7 +785,7 @@ const Header = () => {
                   py-3
                   sm:py-4
 
-                  shadow-[0_20px_60px_rgba(0,0,0,0.5)]
+                  shadow-[0_15px_45px_rgba(0,0,0,0.4)]
                 "
               >
                 <Search
@@ -925,7 +802,9 @@ const Header = () => {
                   autoFocus
                   type="text"
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={(e) =>
+                    setSearchValue(e.target.value)
+                  }
                   placeholder="Search FitMaker..."
                   className="
                     flex-1
@@ -943,29 +822,25 @@ const Header = () => {
                   "
                 />
 
-                <motion.button
+                <button
                   type="button"
-                  whileHover={{
-                    rotate: 90,
-                  }}
-                  whileTap={{
-                    scale: 0.85,
-                  }}
-                  onClick={() => {
-                    setSearchOpen(false);
-                    setSearchValue("");
-                  }}
+                  onClick={closeSearch}
                   className="
                     text-gray-400
                     hover:text-white
+
                     transition
+                    duration-200
+
                     cursor-pointer
                     shrink-0
+
+                    hover:rotate-90
                   "
                   aria-label="Close search"
                 >
                   <X size={20} />
-                </motion.button>
+                </button>
               </div>
 
               {/* Search Results */}
@@ -985,39 +860,37 @@ const Header = () => {
                   border
                   border-white/10
 
-                  bg-black/80
-                  backdrop-blur-2xl
+                  bg-black/95
 
                   scrollbar-thin
                 "
               >
-                {/* No Search */}
+                {/* Quick Navigation */}
 
-                {searchValue.length === 0 ? (
+                {searchValue.trim().length === 0 ? (
                   <div className="p-3 sm:p-5">
-                    <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3 px-2">
+                    <p
+                      className="
+                        text-gray-500
+                        text-xs
+                        sm:text-sm
+                        mb-2
+                        sm:mb-3
+                        px-2
+                      "
+                    >
                       Quick Navigation
                     </p>
 
-                    {navItems.map((item, index) => (
-                      <motion.button
+                    {NAV_ITEMS.map((item) => (
+                      <button
                         key={item.id}
                         type="button"
-                        initial={{
-                          opacity: 0,
-                          x: -10,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          x: 0,
-                        }}
-                        transition={{
-                          delay: index * 0.04,
-                        }}
-                        onClick={() => handleNavigation(item.id)}
+                        onClick={() =>
+                          handleNavigation(item.id)
+                        }
                         className="
                           w-full
-
                           flex
                           items-center
                           justify-between
@@ -1036,6 +909,7 @@ const Header = () => {
                           hover:bg-white/5
 
                           transition
+                          duration-150
 
                           cursor-pointer
                           text-left
@@ -1047,32 +921,25 @@ const Header = () => {
 
                         <ArrowRight
                           size={16}
-                          className="text-gray-500 shrink-0"
+                          className="
+                            text-gray-500
+                            shrink-0
+                          "
                         />
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 ) : filteredItems.length > 0 ? (
                   <div className="p-2 sm:p-3">
-                    {filteredItems.map((item, index) => (
-                      <motion.button
+                    {filteredItems.map((item) => (
+                      <button
                         key={item.id}
                         type="button"
-                        initial={{
-                          opacity: 0,
-                          x: -10,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          x: 0,
-                        }}
-                        transition={{
-                          delay: index * 0.05,
-                        }}
-                        onClick={() => handleNavigation(item.id)}
+                        onClick={() =>
+                          handleNavigation(item.id)
+                        }
                         className="
                           w-full
-
                           flex
                           items-center
                           justify-between
@@ -1091,6 +958,7 @@ const Header = () => {
                           hover:bg-red-500/10
 
                           transition
+                          duration-150
 
                           cursor-pointer
                           text-left
@@ -1102,40 +970,32 @@ const Header = () => {
 
                         <ArrowRight
                           size={16}
-                          className="text-red-500 shrink-0"
+                          className="
+                            text-red-500
+                            shrink-0
+                          "
                         />
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 ) : (
                   <div className="p-8 sm:p-10 text-center">
-                    <motion.div
-                      initial={{
-                        scale: 0.8,
-                        opacity: 0,
-                      }}
-                      animate={{
-                        scale: 1,
-                        opacity: 1,
-                      }}
-                    >
-                      <Search
-                        size={28}
-                        className="
-                          mx-auto
-                          text-gray-600
-                          mb-3
-                        "
-                      />
+                    <Search
+                      size={28}
+                      className="
+                        mx-auto
+                        text-gray-600
+                        mb-3
+                      "
+                    />
 
-                      <p className="text-gray-400 text-sm">
-                        No results found
-                      </p>
+                    <p className="text-gray-400 text-sm">
+                      No results found
+                    </p>
 
-                      <p className="text-gray-600 text-xs mt-1">
-                        Try searching for another section
-                      </p>
-                    </motion.div>
+                    <p className="text-gray-600 text-xs mt-1">
+                      Try searching for another section
+                    </p>
                   </div>
                 )}
               </div>
