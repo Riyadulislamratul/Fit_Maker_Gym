@@ -1008,3 +1008,204 @@ body,
     animation: none;
   }
 }
+
+
+
+/* =========================================================
+   PLANS - LIGHTWEIGHT BACKGROUND ANIMATIONS
+========================================================= */
+
+.plans-bg-glow {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+/* =========================================================
+   RED BACKGROUND GLOW
+========================================================= */
+
+.plans-red-glow {
+  animation: plansRedGlow 12s ease-in-out infinite;
+}
+
+@keyframes plansRedGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.15;
+  }
+
+  33% {
+    transform: translate3d(40px, -30px, 0) scale(1.15);
+    opacity: 0.35;
+  }
+
+  66% {
+    transform: translate3d(-20px, 20px, 0) scale(0.95);
+    opacity: 0.2;
+  }
+}
+
+/* =========================================================
+   ORANGE BACKGROUND GLOW
+========================================================= */
+
+.plans-orange-glow {
+  animation: plansOrangeGlow 14s ease-in-out infinite;
+}
+
+@keyframes plansOrangeGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.12;
+  }
+
+  33% {
+    transform: translate3d(-40px, 25px, 0) scale(1.2);
+    opacity: 0.3;
+  }
+
+  66% {
+    transform: translate3d(20px, -20px, 0) scale(0.9);
+    opacity: 0.15;
+  }
+}
+
+/* =========================================================
+   CENTER GLOW
+========================================================= */
+
+.plans-center-glow {
+  will-change: transform, opacity;
+
+  animation: plansCenterGlow 10s ease-in-out infinite;
+}
+
+@keyframes plansCenterGlow {
+  0%,
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 0.03;
+  }
+
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale(1.2);
+    opacity: 0.1;
+  }
+}
+
+/* =========================================================
+   PLAN CARD TOP GLOW
+========================================================= */
+
+.plan-top-glow {
+  will-change: transform, opacity;
+
+  animation: planTopGlow 5s ease-in-out infinite;
+}
+
+@keyframes planTopGlow {
+  0%,
+  100% {
+    transform: translate3d(-50%, 0, 0) scale(1);
+    opacity: 0.15;
+  }
+
+  50% {
+    transform: translate3d(-50%, 0, 0) scale(1.15);
+    opacity: 0.3;
+  }
+}
+
+/* =========================================================
+   PARTICLE 1
+========================================================= */
+
+.plans-particle-one {
+  will-change: transform, opacity;
+
+  animation: plansParticleOne 6s ease-in-out infinite;
+}
+
+@keyframes plansParticleOne {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(20px, -35px, 0);
+    opacity: 0.7;
+  }
+}
+
+/* =========================================================
+   PARTICLE 2
+========================================================= */
+
+.plans-particle-two {
+  will-change: transform, opacity;
+
+  animation: plansParticleTwo 7s ease-in-out infinite;
+}
+
+@keyframes plansParticleTwo {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(-20px, 30px, 0);
+    opacity: 0.6;
+  }
+}
+
+/* =========================================================
+   MOBILE OPTIMIZATION
+========================================================= */
+
+@media (max-width: 640px) {
+  /*
+    Blur is one of the more expensive effects on mobile GPUs.
+    Keep the glow but reduce its rendering cost.
+  */
+
+  .plans-red-glow,
+  .plans-orange-glow {
+    filter: blur(75px);
+  }
+
+  .plans-center-glow {
+    filter: blur(100px);
+  }
+
+  .plan-top-glow {
+    filter: blur(35px);
+  }
+
+  /*
+    Tiny decorative particles aren't important enough
+    to consume GPU resources on small devices.
+  */
+
+  .plans-particle {
+    display: none;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .plans-bg-glow,
+  .plans-center-glow,
+  .plan-top-glow,
+  .plans-particle {
+    animation: none;
+  }
+}
