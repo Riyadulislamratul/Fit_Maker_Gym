@@ -824,3 +824,187 @@ body,
     animation: none;
   }
 }
+
+
+
+
+
+/* ==========================================================
+   SERVICES - LIGHTWEIGHT BACKGROUND ANIMATIONS
+========================================================== */
+
+.services-glow {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+.services-red-glow {
+  filter: blur(100px);
+  opacity: 0.2;
+  animation: servicesRedGlow 12s ease-in-out infinite;
+}
+
+.services-orange-glow {
+  filter: blur(100px);
+  opacity: 0.15;
+  animation: servicesOrangeGlow 14s ease-in-out infinite;
+}
+
+/* ==========================================================
+   RED GLOW
+   Same movement as your original Framer Motion animation
+========================================================== */
+
+@keyframes servicesRedGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.2;
+  }
+
+  33% {
+    transform: translate3d(40px, -20px, 0) scale(1.15);
+    opacity: 0.4;
+  }
+
+  66% {
+    transform: translate3d(-20px, 30px, 0) scale(0.95);
+    opacity: 0.25;
+  }
+}
+
+/* ==========================================================
+   ORANGE GLOW
+========================================================== */
+
+@keyframes servicesOrangeGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.15;
+  }
+
+  33% {
+    transform: translate3d(-40px, 20px, 0) scale(1.2);
+    opacity: 0.35;
+  }
+
+  66% {
+    transform: translate3d(20px, -20px, 0) scale(0.9);
+    opacity: 0.2;
+  }
+}
+
+/* ==========================================================
+   AMBIENT GLOW
+========================================================== */
+
+.services-ambient-glow {
+  filter: blur(120px);
+  opacity: 0.05;
+  will-change: transform, opacity;
+  animation: servicesAmbientGlow 9s ease-in-out infinite;
+}
+
+@keyframes servicesAmbientGlow {
+  0%,
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 0.05;
+  }
+
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale(1.2);
+    opacity: 0.12;
+  }
+}
+
+/* ==========================================================
+   PARTICLES
+========================================================== */
+
+.services-particle {
+  will-change: transform, opacity;
+}
+
+.services-particle-one {
+  animation: servicesParticleOne 6s ease-in-out infinite;
+}
+
+.services-particle-two {
+  animation: servicesParticleTwo 7s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+@keyframes servicesParticleOne {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(20px, -30px, 0);
+    opacity: 0.7;
+  }
+}
+
+@keyframes servicesParticleTwo {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(-20px, 30px, 0);
+    opacity: 0.6;
+  }
+}
+
+/* ==========================================================
+   CARD GPU OPTIMIZATION
+========================================================== */
+
+.services-glow,
+.services-ambient-glow,
+.services-particle {
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  /*
+    Keep the same appearance, but reduce the amount of
+    expensive blur work on smaller GPUs.
+  */
+
+  .services-red-glow,
+  .services-orange-glow {
+    filter: blur(70px);
+  }
+
+  .services-ambient-glow {
+    filter: blur(85px);
+  }
+
+  /*
+    Hide decorative particles on small touch devices.
+    The cards and their important animations remain intact.
+  */
+
+  .services-particle {
+    display: none;
+  }
+}
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .services-glow,
+  .services-ambient-glow,
+  .services-particle {
+    animation: none;
+  }
+}

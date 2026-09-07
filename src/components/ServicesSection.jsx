@@ -1,9 +1,4 @@
-import React, { useState } from "react";
-import GYM1 from "../assets/gym1.jpg";
-import GYM2 from "../assets/gym2.jpg";
-import GYM3 from "../assets/gym3.jpg";
-import GYM4 from "../assets/gym4.jpg";
-
+import React, { useEffect, useRef, useState } from "react";
 import {
   motion,
   AnimatePresence,
@@ -13,6 +8,11 @@ import {
 } from "framer-motion";
 
 import { ArrowRight, X, CheckCircle2 } from "lucide-react";
+
+import GYM1 from "../assets/gym1.jpg";
+import GYM2 from "../assets/gym2.jpg";
+import GYM3 from "../assets/gym3.jpg";
+import GYM4 from "../assets/gym4.jpg";
 
 const services = [
   {
@@ -74,6 +74,8 @@ const services = [
 ========================================================= */
 
 const ServiceCard = ({ service, index, onOpen }) => {
+  const cardRef = useRef(null);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -82,6 +84,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
     {
       stiffness: 200,
       damping: 20,
+      mass: 0.4,
     }
   );
 
@@ -90,11 +93,34 @@ const ServiceCard = ({ service, index, onOpen }) => {
     {
       stiffness: 200,
       damping: 20,
+      mass: 0.4,
     }
   );
 
+  // Cache the card's dimensions instead of calling
+  // getBoundingClientRect() on every mouse movement.
+  const rectRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    if (!cardRef.current) return;
+
+    rectRef.current =
+      cardRef.current.getBoundingClientRect();
+  };
+
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    // Don't run the 3D effect on touch devices.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      return;
+    }
+
+    if (!rectRef.current) {
+      handleMouseEnter();
+    }
+
+    const rect = rectRef.current;
+
+    if (!rect) return;
 
     const x =
       (e.clientX - rect.left) / rect.width - 0.5;
@@ -109,6 +135,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
+    rectRef.current = null;
   };
 
   return (
@@ -137,6 +164,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
       }}
     >
       <motion.div
+        ref={cardRef}
         style={{
           rotateX,
           rotateY,
@@ -148,6 +176,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
         transition={{
           duration: 0.3,
         }}
+        onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onClick={() => onOpen(service)}
@@ -170,7 +199,17 @@ const ServiceCard = ({ service, index, onOpen }) => {
             IMAGE
         ========================================== */}
 
-        <div className="h-[260px] sm:h-[320px] w-full overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900">
+        <div
+          className="
+            h-[260px]
+            sm:h-[320px]
+            w-full
+            overflow-hidden
+            bg-gradient-to-br
+            from-zinc-800
+            to-zinc-900
+          "
+        >
           <motion.div
             whileHover={{
               scale: 1.1,
@@ -184,6 +223,8 @@ const ServiceCard = ({ service, index, onOpen }) => {
             <img
               src={service.image}
               alt={service.title}
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
               className="
                 h-full
                 w-full
@@ -212,6 +253,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
             transition
             duration-500
             group-hover:from-red-500/10
+            pointer-events-none
           "
         />
 
@@ -248,7 +290,23 @@ const ServiceCard = ({ service, index, onOpen }) => {
             ANIMATED GLOW
         ========================================== */}
 
-        <div className="absolute -bottom-20 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-red-500/0 blur-3xl transition-all duration-700 group-hover:bg-red-500/40" />
+        <div
+          className="
+            absolute
+            -bottom-20
+            left-1/2
+            h-40
+            w-40
+            -translate-x-1/2
+            rounded-full
+            bg-red-500/0
+            blur-3xl
+            transition-all
+            duration-700
+            group-hover:bg-red-500/40
+            pointer-events-none
+          "
+        />
 
         {/* =========================================
             RED TOP LINE
@@ -279,6 +337,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
             via-red-500
             to-transparent
             origin-left
+            pointer-events-none
           "
         />
 
@@ -286,8 +345,17 @@ const ServiceCard = ({ service, index, onOpen }) => {
             CONTENT
         ========================================== */}
 
-        <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5">
-
+        <div
+          className="
+            absolute
+            inset-0
+            flex
+            flex-col
+            justify-between
+            p-4
+            sm:p-5
+          "
+        >
           <div>
             {/* Title */}
 
@@ -312,24 +380,35 @@ const ServiceCard = ({ service, index, onOpen }) => {
 
             {/* Subtitle */}
 
-            <p className="mt-2 text-[11px] sm:text-xs font-semibold text-gray-200 leading-5">
+            <p
+              className="
+                mt-2
+                text-[11px]
+                sm:text-xs
+                font-semibold
+                text-gray-200
+                leading-5
+              "
+            >
               {service.subtitle}
             </p>
 
             {/* Description */}
 
-            <p className="
-              mt-3
-              sm:mt-4
-              text-[11px]
-              sm:text-xs
-              leading-5
-              sm:leading-6
-              text-gray-400
-              transition
-              duration-300
-              group-hover:text-gray-300
-            ">
+            <p
+              className="
+                mt-3
+                sm:mt-4
+                text-[11px]
+                sm:text-xs
+                leading-5
+                sm:leading-6
+                text-gray-400
+                transition
+                duration-300
+                group-hover:text-gray-300
+              "
+            >
               {service.description}
             </p>
           </div>
@@ -339,6 +418,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
           ========================================== */}
 
           <motion.button
+            type="button"
             whileHover={{
               x: 5,
             }}
@@ -395,6 +475,7 @@ const ServiceCard = ({ service, index, onOpen }) => {
             rounded-full
             bg-red-500
             shadow-[0_0_15px_rgba(239,68,68,0.9)]
+            pointer-events-none
           "
         />
       </motion.div>
@@ -407,7 +488,46 @@ const ServiceCard = ({ service, index, onOpen }) => {
 ========================================================= */
 
 const ServicesSection = () => {
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] =
+    useState(null);
+
+  // Lock background scrolling while modal is open.
+  useEffect(() => {
+    if (!selectedService) return;
+
+    const originalOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        originalOverflow;
+    };
+  }, [selectedService]);
+
+  // ESC closes modal.
+  useEffect(() => {
+    if (!selectedService) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setSelectedService(null);
+      }
+    };
+
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, [selectedService]);
 
   return (
     <section
@@ -422,58 +542,56 @@ const ServicesSection = () => {
       "
       id="services"
     >
-
       {/* =====================================================
           GLOW BACKGROUND
+          CSS handles the continuous animations.
+          This removes several continuously running
+          Framer Motion animation loops.
       ====================================================== */}
 
-      {/* Original Red Glow - Animated */}
-
-      <motion.div
-        animate={{
-          x: [0, 40, -20, 0],
-          y: [0, -20, 30, 0],
-          scale: [1, 1.15, 0.95, 1],
-          opacity: [0.2, 0.4, 0.25, 0.2],
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute left-[-120px] top-20 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-red-600 blur-[100px] sm:blur-[120px]"
-      />
-
-      {/* Original Orange Glow - Animated */}
-
-      <motion.div
-        animate={{
-          x: [0, -40, 20, 0],
-          y: [0, 20, -20, 0],
-          scale: [1, 1.2, 0.9, 1],
-          opacity: [0.15, 0.35, 0.2, 0.15],
-        }}
-        transition={{
-          duration: 14,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute right-[-120px] bottom-0 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-orange-500 blur-[100px] sm:blur-[120px] hidden lg:block"
-      />
-
-      {/* Extra Ambient Glow */}
-
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.05, 0.12, 0.05],
-        }}
-        transition={{
-          duration: 9,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+      <div
         className="
+          services-glow
+          services-red-glow
+          absolute
+          left-[-120px]
+          top-20
+          h-52
+          w-52
+          sm:h-72
+          sm:w-72
+          rounded-full
+          bg-red-600
+          pointer-events-none
+        "
+      />
+
+      <div
+        className="
+          services-glow
+          services-orange-glow
+          absolute
+          right-[-120px]
+          bottom-0
+          h-52
+          w-52
+          sm:h-72
+          sm:w-72
+          rounded-full
+          bg-orange-500
+          pointer-events-none
+          hidden
+          lg:block
+        "
+      />
+
+      {/* =====================================================
+          EXTRA AMBIENT GLOW
+      ====================================================== */}
+
+      <div
+        className="
+          services-ambient-glow
           absolute
           left-1/2
           top-1/2
@@ -482,7 +600,6 @@ const ServicesSection = () => {
           w-[400px]
           h-[300px]
           bg-red-600
-          blur-[160px]
           rounded-full
           pointer-events-none
         "
@@ -492,18 +609,10 @@ const ServicesSection = () => {
           FLOATING PARTICLES
       ====================================================== */}
 
-      <motion.div
-        animate={{
-          y: [0, -30, 0],
-          x: [0, 20, 0],
-          opacity: [0.1, 0.7, 0.1],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+      <div
         className="
+          services-particle
+          services-particle-one
           absolute
           left-[15%]
           top-[20%]
@@ -511,22 +620,14 @@ const ServicesSection = () => {
           h-2
           rounded-full
           bg-red-500
+          pointer-events-none
         "
       />
 
-      <motion.div
-        animate={{
-          y: [0, 30, 0],
-          x: [0, -20, 0],
-          opacity: [0.1, 0.6, 0.1],
-        }}
-        transition={{
-          duration: 7,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
+      <div
         className="
+          services-particle
+          services-particle-two
           absolute
           right-[20%]
           bottom-[20%]
@@ -534,6 +635,7 @@ const ServicesSection = () => {
           h-2
           rounded-full
           bg-orange-500
+          pointer-events-none
         "
       />
 
@@ -541,8 +643,16 @@ const ServicesSection = () => {
           CONTENT
       ====================================================== */}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
-
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          max-w-7xl
+          px-4
+          sm:px-6
+        "
+      >
         {/* ==================================================
             HEADING
         ================================================== */}
@@ -581,9 +691,17 @@ const ServicesSection = () => {
             transition={{
               duration: 0.7,
             }}
-            className="text-3xl sm:text-4xl font-extrabold leading-tight"
+            className="
+              text-3xl
+              sm:text-4xl
+              font-extrabold
+              leading-tight
+            "
           >
-            Our <span className="text-red-500">Services</span>
+            Our{" "}
+            <span className="text-red-500">
+              Services
+            </span>
           </motion.h2>
 
           <motion.p
@@ -602,10 +720,19 @@ const ServicesSection = () => {
               duration: 0.6,
               delay: 0.2,
             }}
-            className="mx-auto mt-4 max-w-3xl text-sm sm:text-base text-gray-400 leading-6"
+            className="
+              mx-auto
+              mt-4
+              max-w-3xl
+              text-sm
+              sm:text-base
+              text-gray-400
+              leading-6
+            "
           >
-            At This Part You Can Easily Access All Of Our Services.
-            Take A Look At Them And Choose Which Ever You Want.
+            At This Part You Can Easily Access All
+            Of Our Services. Take A Look At Them And
+            Choose Which Ever You Want.
           </motion.p>
         </motion.div>
 
@@ -613,17 +740,25 @@ const ServicesSection = () => {
             CARDS
         ================================================== */}
 
-        <div className="mt-12 sm:mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-
+        <div
+          className="
+            mt-12
+            sm:mt-14
+            grid
+            grid-cols-1
+            gap-6
+            sm:grid-cols-2
+            xl:grid-cols-4
+          "
+        >
           {services.map((service, index) => (
             <ServiceCard
-              key={index}
+              key={service.title}
               service={service}
               index={index}
               onOpen={setSelectedService}
             />
           ))}
-
         </div>
       </div>
 
@@ -643,7 +778,9 @@ const ServicesSection = () => {
             exit={{
               opacity: 0,
             }}
-            onClick={() => setSelectedService(null)}
+            onClick={() =>
+              setSelectedService(null)
+            }
             className="
               fixed
               inset-0
@@ -676,7 +813,9 @@ const ServicesSection = () => {
                 duration: 0.4,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) =>
+                e.stopPropagation()
+              }
               className="
                 relative
                 w-full
@@ -693,7 +832,11 @@ const ServicesSection = () => {
               {/* Close Button */}
 
               <button
-                onClick={() => setSelectedService(null)}
+                type="button"
+                aria-label="Close modal"
+                onClick={() =>
+                  setSelectedService(null)
+                }
                 className="
                   absolute
                   top-4
@@ -719,10 +862,12 @@ const ServicesSection = () => {
 
               {/* Image */}
 
-              <div className="h-60 sm:h-80 overflow-hidden">
+              <div className="relative h-60 sm:h-80 overflow-hidden">
                 <img
                   src={selectedService.image}
                   alt={selectedService.title}
+                  loading="eager"
+                  decoding="async"
                   className="
                     h-full
                     w-full
@@ -730,48 +875,70 @@ const ServicesSection = () => {
                   "
                 />
 
-                <div className="
-                  absolute
-                  top-0
-                  left-0
-                  right-0
-                  h-80
-                  bg-gradient-to-b
-                  from-transparent
-                  to-[#111]
-                " />
+                <div
+                  className="
+                    absolute
+                    top-0
+                    left-0
+                    right-0
+                    h-80
+                    bg-gradient-to-b
+                    from-transparent
+                    to-[#111]
+                    pointer-events-none
+                  "
+                />
               </div>
 
               {/* Modal Content */}
 
-              <div className="relative p-6 sm:p-8 -mt-10">
-
-                <p className="text-sm text-red-500 font-semibold">
+              <div
+                className="
+                  relative
+                  p-6
+                  sm:p-8
+                  -mt-10
+                "
+              >
+                <p
+                  className="
+                    text-sm
+                    text-red-500
+                    font-semibold
+                  "
+                >
                   FITMAKER PROGRAM
                 </p>
 
-                <h3 className="
-                  mt-2
-                  text-2xl
-                  sm:text-3xl
-                  font-extrabold
-                  text-white
-                ">
+                <h3
+                  className="
+                    mt-2
+                    text-2xl
+                    sm:text-3xl
+                    font-extrabold
+                    text-white
+                  "
+                >
                   {selectedService.title}
                 </h3>
 
-                <p className="mt-3 text-gray-400 leading-7">
+                <p
+                  className="
+                    mt-3
+                    text-gray-400
+                    leading-7
+                  "
+                >
                   {selectedService.description}
                 </p>
 
                 {/* Features */}
 
                 <div className="mt-6 space-y-3">
-
                   {selectedService.features.map(
                     (feature, index) => (
                       <motion.div
-                        key={index}
+                        key={feature}
                         initial={{
                           opacity: 0,
                           x: -15,
@@ -781,7 +948,8 @@ const ServicesSection = () => {
                           x: 0,
                         }}
                         transition={{
-                          delay: 0.2 + index * 0.08,
+                          delay:
+                            0.2 + index * 0.08,
                         }}
                         className="
                           flex
@@ -793,19 +961,22 @@ const ServicesSection = () => {
                       >
                         <CheckCircle2
                           size={17}
-                          className="text-red-500 shrink-0"
+                          className="
+                            text-red-500
+                            shrink-0
+                          "
                         />
 
                         {feature}
                       </motion.div>
                     )
                   )}
-
                 </div>
 
                 {/* CTA */}
 
                 <motion.button
+                  type="button"
                   whileHover={{
                     scale: 1.03,
                     boxShadow:
@@ -829,7 +1000,6 @@ const ServicesSection = () => {
                 >
                   Start This Program
                 </motion.button>
-
               </div>
             </motion.div>
           </motion.div>
