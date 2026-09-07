@@ -47,3 +47,607 @@ body,
 * {
   box-sizing: border-box;
 }
+/* =========================================================
+   HERO PERFORMANCE ANIMATIONS
+========================================================= */
+
+.hero-glow,
+.hero-light,
+.hero-particle,
+.hero-small-glow,
+.hero-ring,
+.hero-ring-dot,
+.hero-main-circle,
+.hero-trainer-image,
+.hero-card {
+  will-change: transform;
+}
+
+/* =========================================================
+   LARGE BACKGROUND GLOWS
+========================================================= */
+
+.hero-glow {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.hero-glow-orange {
+  width: 240px;
+  height: 240px;
+
+  top: 80px;
+  left: -40px;
+
+  background: rgba(249, 115, 22, 0.18);
+
+  filter: blur(80px);
+
+  animation: heroGlowOrange 14s ease-in-out infinite;
+}
+
+.hero-glow-red {
+  width: 280px;
+  height: 280px;
+
+  right: -50px;
+  bottom: 40px;
+
+  background: rgba(239, 68, 68, 0.18);
+
+  filter: blur(90px);
+
+  animation: heroGlowRed 16s ease-in-out infinite;
+}
+
+.hero-glow-center {
+  width: 360px;
+  height: 360px;
+
+  top: 45%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: rgba(185, 28, 28, 0.08);
+
+  filter: blur(110px);
+
+  animation: heroCenterGlow 12s ease-in-out infinite;
+}
+
+@keyframes heroGlowOrange {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(30px, -15px, 0) scale(1.08);
+  }
+}
+
+@keyframes heroGlowRed {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-30px, 20px, 0) scale(1.08);
+  }
+}
+
+@keyframes heroCenterGlow {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* =========================================================
+   SMALL BACKGROUND LIGHTS
+========================================================= */
+
+.hero-light {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.hero-light-orange {
+  width: 70px;
+  height: 70px;
+
+  top: 15%;
+  left: 35%;
+
+  background: rgba(249, 115, 22, 0.15);
+
+  filter: blur(35px);
+
+  animation: heroLightOrange 12s ease-in-out infinite;
+}
+
+.hero-light-red {
+  width: 80px;
+  height: 80px;
+
+  top: 30%;
+  right: 30%;
+
+  background: rgba(239, 68, 68, 0.12);
+
+  filter: blur(40px);
+
+  animation: heroLightRed 14s ease-in-out infinite;
+}
+
+@keyframes heroLightOrange {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate3d(50px, 20px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes heroLightRed {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate3d(-50px, -20px, 0);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.hero-particle {
+  position: absolute;
+
+  border-radius: 9999px;
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+.hero-particle-1 {
+  width: 6px;
+  height: 6px;
+
+  top: 22%;
+  left: 45%;
+
+  background: rgba(251, 146, 60, 0.8);
+
+  animation: heroParticle1 5s ease-in-out infinite;
+}
+
+.hero-particle-2 {
+  width: 8px;
+  height: 8px;
+
+  top: 40%;
+  right: 18%;
+
+  background: rgba(239, 68, 68, 0.7);
+
+  animation: heroParticle2 7s ease-in-out infinite;
+}
+
+.hero-particle-3 {
+  width: 6px;
+  height: 6px;
+
+  bottom: 20%;
+  left: 20%;
+
+  background: rgba(249, 115, 22, 0.6);
+
+  animation: heroParticle3 8s ease-in-out infinite;
+}
+
+@keyframes heroParticle1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translate3d(20px, -40px, 0) scale(1.4);
+    opacity: 0.8;
+  }
+}
+
+@keyframes heroParticle2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(-25px, 35px, 0) scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+@keyframes heroParticle3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(30px, -30px, 0);
+    opacity: 0.6;
+  }
+}
+
+/* =========================================================
+   SMALL IMAGE GLOWS
+========================================================= */
+
+.hero-small-glow {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.hero-small-glow-orange {
+  width: 80px;
+  height: 80px;
+
+  top: 0;
+  left: 10px;
+
+  background: rgba(249, 115, 22, 0.3);
+
+  filter: blur(18px);
+
+  animation: smallOrangeGlow 5s ease-in-out infinite;
+}
+
+.hero-small-glow-red {
+  width: 100px;
+  height: 100px;
+
+  right: 0;
+  bottom: -10px;
+
+  background: rgba(239, 68, 68, 0.25);
+
+  filter: blur(30px);
+
+  animation: smallRedGlow 6s ease-in-out infinite;
+}
+
+@keyframes smallOrangeGlow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translate3d(8px, 0, 0) scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+@keyframes smallRedGlow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translate3d(-10px, 0, 0) scale(1.15);
+    opacity: 0.65;
+  }
+}
+
+/* =========================================================
+   MAIN GLOW
+========================================================= */
+
+.hero-main-glow {
+  animation: mainGlow 7s ease-in-out infinite;
+}
+
+@keyframes mainGlow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.06);
+  }
+}
+
+/* =========================================================
+   ROTATING RING
+========================================================= */
+
+.hero-ring {
+  animation: heroRingRotate 35s linear infinite;
+}
+
+@keyframes heroRingRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-ring-dot {
+  position: absolute;
+
+  top: -2px;
+  left: 50%;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 9999px;
+
+  background: #ef4444;
+
+  box-shadow:
+    0 0 10px rgba(239, 68, 68, 0.8);
+
+  transform: translateX(-50%);
+
+  animation: ringDotPulse 3s ease-in-out infinite;
+}
+
+@keyframes ringDotPulse {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.5);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   MAIN CIRCLE
+========================================================= */
+
+.hero-main-circle {
+  animation: circleGlow 5s ease-in-out infinite;
+}
+
+@keyframes circleGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 25px rgba(239, 68, 68, 0.1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 45px rgba(239, 68, 68, 0.22);
+  }
+}
+
+/* =========================================================
+   TRAINER IMAGE
+========================================================= */
+
+.hero-trainer-image {
+  animation: trainerFloat 5s ease-in-out infinite;
+}
+
+@keyframes trainerFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* =========================================================
+   FLOATING CARDS
+========================================================= */
+
+.hero-card {
+  animation-duration: 4.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+
+  transform-origin: center;
+}
+
+.hero-card-1 {
+  animation-name: cardFloat1;
+}
+
+.hero-card-2 {
+  animation-name: cardFloat2;
+  animation-delay: -1s;
+}
+
+.hero-card-3 {
+  animation-name: cardFloat3;
+  animation-delay: -2s;
+}
+
+.hero-card-4 {
+  animation-name: cardFloat4;
+  animation-delay: -2.5s;
+}
+
+@keyframes cardFloat1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes cardFloat2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes cardFloat3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes cardFloat4 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -9px, 0);
+  }
+}
+
+/* =========================================================
+   BUTTON GLOW
+========================================================= */
+
+.hero-primary-button {
+  box-shadow:
+    0 0 0 rgba(68, 239, 68, 0);
+}
+
+.hero-primary-button:hover {
+  box-shadow:
+    0 10px 25px rgba(221, 42, 42, 0.25);
+}
+
+/* =========================================================
+   MOBILE PERFORMANCE
+========================================================= */
+
+@media (max-width: 768px) {
+  .hero-glow-orange {
+    width: 180px;
+    height: 180px;
+    filter: blur(60px);
+  }
+
+  .hero-glow-red {
+    width: 200px;
+    height: 200px;
+    filter: blur(65px);
+  }
+
+  .hero-glow-center {
+    width: 260px;
+    height: 260px;
+    filter: blur(75px);
+  }
+
+  .hero-light {
+    filter: blur(25px);
+  }
+
+  .hero-small-glow-orange {
+    filter: blur(15px);
+  }
+
+  .hero-small-glow-red {
+    filter: blur(22px);
+  }
+
+  /*
+    Fewer visual effects on mobile.
+    The main design remains intact.
+  */
+
+  .hero-particle-2,
+  .hero-particle-3 {
+    display: none;
+  }
+
+  .hero-ring {
+    opacity: 0.7;
+  }
+}
+
+/* =========================================================
+   TOUCH DEVICES
+   Remove unnecessary hover/parallax visual complexity.
+========================================================= */
+
+@media (pointer: coarse) {
+  .hero-card {
+    animation-duration: 6s;
+  }
+
+  .hero-ring {
+    animation-duration: 45s;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow,
+  .hero-light,
+  .hero-particle,
+  .hero-small-glow,
+  .hero-ring,
+  .hero-ring-dot,
+  .hero-main-circle,
+  .hero-trainer-image,
+  .hero-card {
+    animation: none !important;
+  }
+}
