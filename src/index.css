@@ -651,3 +651,176 @@ body,
     animation: none !important;
   }
 }
+
+
+/* ==========================================================
+   STATS BACKGROUND GLOWS
+========================================================== */
+
+.stats-bg-glow {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+.stats-bg-glow-red {
+  filter: blur(100px);
+  opacity: 0.25;
+  animation: statsRedGlow 12s ease-in-out infinite;
+}
+
+.stats-bg-glow-orange {
+  filter: blur(100px);
+  opacity: 0.2;
+  animation: statsOrangeGlow 10s ease-in-out infinite;
+}
+
+/* ==========================================================
+   RED GLOW
+========================================================== */
+
+@keyframes statsRedGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.25;
+  }
+
+  33% {
+    transform: translate3d(40px, -25px, 0) scale(1.15);
+    opacity: 0.45;
+  }
+
+  66% {
+    transform: translate3d(-20px, 20px, 0) scale(0.95);
+    opacity: 0.3;
+  }
+}
+
+/* ==========================================================
+   ORANGE GLOW
+========================================================== */
+
+@keyframes statsOrangeGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.2;
+  }
+
+  33% {
+    transform: translate3d(-35px, 20px, 0) scale(1.2);
+    opacity: 0.4;
+  }
+
+  66% {
+    transform: translate3d(20px, -15px, 0) scale(0.9);
+    opacity: 0.25;
+  }
+}
+
+/* ==========================================================
+   CENTER AMBIENT LIGHT
+========================================================== */
+
+.stats-ambient-glow {
+  filter: blur(120px);
+  opacity: 0.05;
+  will-change: transform, opacity;
+  animation: statsAmbient 8s ease-in-out infinite;
+}
+
+@keyframes statsAmbient {
+  0%,
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 0.05;
+  }
+
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale(1.25);
+    opacity: 0.15;
+  }
+}
+
+/* ==========================================================
+   PARTICLES
+========================================================== */
+
+.stats-particle {
+  will-change: transform, opacity;
+}
+
+.stats-particle-1 {
+  animation: statsParticleOne 5s ease-in-out infinite;
+}
+
+.stats-particle-2 {
+  animation: statsParticleTwo 7s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+@keyframes statsParticleOne {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(15px, -30px, 0) scale(1.5);
+    opacity: 0.7;
+  }
+}
+
+@keyframes statsParticleTwo {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translate3d(-20px, 25px, 0) scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+/* ==========================================================
+   CARD GPU OPTIMIZATION
+========================================================== */
+
+.stats-card {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/* ==========================================================
+   MOBILE
+   Keep the design, just reduce expensive blur rendering.
+========================================================== */
+
+@media (max-width: 640px) {
+  .stats-bg-glow-red {
+    filter: blur(70px);
+  }
+
+  .stats-bg-glow-orange {
+    filter: blur(70px);
+  }
+
+  .stats-ambient-glow {
+    filter: blur(90px);
+  }
+}
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .stats-bg-glow,
+  .stats-ambient-glow,
+  .stats-particle {
+    animation: none;
+  }
+}

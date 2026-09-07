@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const stats = [
@@ -32,33 +32,39 @@ const stats = [
   },
 ];
 
-/* ==========================================
-   ANIMATED NUMBER COMPONENT
-========================================== */
+/* ==========================================================
+   OPTIMIZED ANIMATED NUMBER
+   ----------------------------------------------------------
+   Original version used React setState on every animation
+   frame. This version updates the DOM directly, avoiding
+   unnecessary React re-renders.
+========================================================== */
 
-const AnimatedNumber = ({ number, prefix = "", suffix = "" }) => {
-  const [count, setCount] = useState(0);
-
-  const ref = React.useRef(null);
-
+const AnimatedNumber = ({
+  number,
+  prefix = "",
+  suffix = "",
+}) => {
+  const ref = useRef(null);
   const isInView = useInView(ref, {
     once: true,
     margin: "-100px",
   });
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || !ref.current) return;
 
-    let start = 0;
-
+    const element = ref.current;
     const duration = 1800;
     const startTime = performance.now();
+
+    let animationFrame;
 
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
-      // Smooth ease-out animation
+      // Same smooth ease-out as original
       const easedProgress =
         1 - Math.pow(1 - progress, 4);
 
@@ -66,88 +72,97 @@ const AnimatedNumber = ({ number, prefix = "", suffix = "" }) => {
         easedProgress * number
       );
 
-      setCount(currentValue);
+      element.textContent = `${prefix}${currentValue}${suffix}`;
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationFrame =
+          requestAnimationFrame(animate);
       } else {
-        setCount(number);
+        element.textContent =
+          `${prefix}${number}${suffix}`;
       }
     };
 
-    requestAnimationFrame(animate);
-  }, [isInView, number]);
+    animationFrame =
+      requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [isInView, number, prefix, suffix]);
 
   return (
     <span ref={ref}>
-      {prefix}
-      {count}
-      {suffix}
+      {prefix}0{suffix}
     </span>
   );
 };
 
-/* ==========================================
+/* ==========================================================
    MAIN COMPONENT
-========================================== */
+========================================================== */
 
 const StatsSection = () => {
   return (
-    <section className="relative py-12 sm:py-16 overflow-hidden lg:overflow-visible text-white">
-
+    <section
+      className="
+        relative
+        py-12
+        sm:py-16
+        overflow-hidden
+        lg:overflow-visible
+        text-white
+      "
+    >
       {/* =====================================================
           BACKGROUND GLOWS
+          -----------------------------------------------------
+          Same visual position/size.
+          Animation moved to CSS for lower overhead.
       ====================================================== */}
 
-      {/* Original Red Glow - Animated */}
-
-      <motion.div
-        animate={{
-          x: [0, 40, -20, 0],
-          y: [0, -25, 20, 0],
-          scale: [1, 1.15, 0.95, 1],
-          opacity: [0.25, 0.45, 0.3, 0.25],
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute left-[-100px] top-40 sm:top-50 h-52 w-52 sm:h-72 sm:w-72 rounded-full bg-red-600 blur-[100px] sm:blur-[120px]"
+      <div
+        className="
+          stats-bg-glow
+          stats-bg-glow-red
+          absolute
+          left-[-100px]
+          top-40
+          sm:top-50
+          h-52
+          w-52
+          sm:h-72
+          sm:w-72
+          rounded-full
+          bg-red-600
+          pointer-events-none
+        "
       />
 
-      {/* Original Orange Glow - Animated */}
-
-      <motion.div
-        animate={{
-          x: [0, -35, 20, 0],
-          y: [0, 20, -15, 0],
-          scale: [1, 1.2, 0.9, 1],
-          opacity: [0.2, 0.4, 0.25, 0.2],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute right-[-40px] top-20 sm:top-29 h-32 w-32 sm:size-40 rounded-full bg-orange-500 blur-[100px] sm:blur-[120px]"
+      <div
+        className="
+          stats-bg-glow
+          stats-bg-glow-orange
+          absolute
+          right-[-40px]
+          top-20
+          sm:top-29
+          h-32
+          w-32
+          sm:size-40
+          rounded-full
+          bg-orange-500
+          pointer-events-none
+        "
       />
 
       {/* =====================================================
           EXTRA AMBIENT LIGHT
       ====================================================== */}
 
-      <motion.div
-        animate={{
-          scale: [1, 1.25, 1],
-          opacity: [0.05, 0.15, 0.05],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+      <div
         className="
+          stats-ambient-glow
           absolute
           left-1/2
           top-1/2
@@ -159,7 +174,6 @@ const StatsSection = () => {
           sm:h-[300px]
           rounded-full
           bg-red-600
-          blur-[150px]
           pointer-events-none
         "
       />
@@ -168,19 +182,10 @@ const StatsSection = () => {
           FLOATING PARTICLES
       ====================================================== */}
 
-      <motion.div
-        animate={{
-          y: [0, -30, 0],
-          x: [0, 15, 0],
-          opacity: [0.1, 0.7, 0.1],
-          scale: [1, 1.5, 1],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+      <div
         className="
+          stats-particle
+          stats-particle-1
           absolute
           left-[20%]
           top-[20%]
@@ -192,19 +197,10 @@ const StatsSection = () => {
         "
       />
 
-      <motion.div
-        animate={{
-          y: [0, 25, 0],
-          x: [0, -20, 0],
-          opacity: [0.1, 0.6, 0.1],
-        }}
-        transition={{
-          duration: 7,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
+      <div
         className="
+          stats-particle
+          stats-particle-2
           absolute
           right-[25%]
           bottom-[15%]
@@ -220,45 +216,50 @@ const StatsSection = () => {
           CONTENT
       ====================================================== */}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
-
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 md:grid-cols-4 md:gap-8 cursor-pointer">
-
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          max-w-7xl
+          px-4
+          sm:px-6
+        "
+      >
+        <div
+          className="
+            grid
+            grid-cols-1
+            gap-5
+            sm:grid-cols-2
+            sm:gap-6
+            md:grid-cols-4
+            md:gap-8
+            cursor-pointer
+          "
+        >
           {stats.map((item, index) => (
             <motion.div
-              key={index}
-
-              /* ------------------------------------------
-                 Scroll Reveal
-              ------------------------------------------ */
-
+              key={item.title}
               initial={{
                 opacity: 0,
                 y: 50,
                 scale: 0.95,
               }}
-
               whileInView={{
                 opacity: 1,
                 y: 0,
                 scale: 1,
               }}
-
               viewport={{
                 once: true,
                 amount: 0.2,
               }}
-
               transition={{
                 duration: 0.7,
                 delay: index * 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-
-              /* ------------------------------------------
-                 Hover
-              ------------------------------------------ */
-
               whileHover={{
                 y: -10,
                 scale: 1.02,
@@ -266,8 +267,8 @@ const StatsSection = () => {
                   duration: 0.3,
                 },
               }}
-
               className="
+                stats-card
                 group
                 relative
                 overflow-hidden
@@ -280,10 +281,8 @@ const StatsSection = () => {
                 duration-500
                 hover:border-red-500
                 hover:bg-white/[0.05]
-                hover:shadow-[0_0_35px_rgba(255,0,0,0.15)]
               "
             >
-
               {/* =================================================
                   CARD SHINE
               ================================================== */}
@@ -362,6 +361,7 @@ const StatsSection = () => {
                   transition-all
                   duration-500
                   group-hover:bg-red-500/70
+                  pointer-events-none
                 "
               />
 
@@ -508,10 +508,8 @@ const StatsSection = () => {
                   duration-300
                 "
               />
-
             </motion.div>
           ))}
-
         </div>
       </div>
     </section>
