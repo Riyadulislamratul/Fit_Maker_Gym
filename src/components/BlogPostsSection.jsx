@@ -16,40 +16,30 @@ const blogs = [
     title: "5 Essential Exercises For Building Muscle",
     category: "Strength Training",
     image: GYM1,
-
-    // Real article
     link: "https://www.healthline.com/health/fitness/how-to-gain-muscle",
   },
   {
     title: "The Ultimate Guide To A Balanced Diet",
     category: "Nutrition",
     image: Diet,
-
-    // Real article
     link: "https://www.healthline.com/nutrition/tips-for-eating-a-balanced-diet",
   },
   {
     title: "The Benefits Of HIIT Training",
     category: "Fitness",
     image: GYM2,
-
-    // Real article
     link: "https://www.healthline.com/health/everyday-fitness/hiit-at-home",
   },
   {
     title: "Home Workouts For Busy People",
     category: "Home Workout",
     image: GYM3,
-
-    // Real article
     link: "https://www.healthline.com/health/fitness-exercise/at-home-workouts",
   },
   {
     title: "How To Always Stay Motivated",
     category: "Motivation",
     image: GYM4,
-
-    // Real article
     link: "https://www.healthline.com/health/exercise-fitness/how-to-motivate-yourself-to-workout",
   },
 ];
@@ -57,24 +47,25 @@ const blogs = [
 const BlogPostsSection = () => {
   return (
     <section
+      id="blog"
       className="
         relative
         overflow-hidden
-        lg:overflow-visible
         py-24
         text-white
+        lg:overflow-visible
       "
-      id="blog"
     >
       {/* =====================================================
-          BACKGROUND GLOW
+          BACKGROUND GLOWS
       ====================================================== */}
 
       <div
         className="
+          pointer-events-none
           absolute
-          left-0
           bottom-0
+          left-0
           h-72
           w-72
           rounded-full
@@ -86,6 +77,7 @@ const BlogPostsSection = () => {
 
       <div
         className="
+          pointer-events-none
           absolute
           right-0
           top-0
@@ -98,10 +90,9 @@ const BlogPostsSection = () => {
         "
       />
 
-      {/* Additional small moving glow */}
-
       <div
         className="
+          pointer-events-none
           absolute
           left-[35%]
           top-[35%]
@@ -129,31 +120,31 @@ const BlogPostsSection = () => {
             flex
             flex-col
             gap-6
+            animate-[blogHeader_0.9s_ease-out]
             lg:flex-row
             lg:items-center
             lg:justify-between
-            animate-[blogHeader_0.9s_ease-out]
           "
         >
-          {/* Heading */}
-
           <div>
             <h2
               className="
                 text-4xl
                 font-extrabold
-                transition-all
+                transition-[letter-spacing]
                 duration-500
+                ease-out
                 hover:tracking-wide
               "
             >
               Fitmaker{" "}
               <span
                 className="
-                  text-red-500
                   inline-block
-                  transition-all
+                  text-red-500
+                  transition-transform
                   duration-500
+                  ease-out
                   hover:scale-105
                 "
               >
@@ -192,25 +183,29 @@ const BlogPostsSection = () => {
                 flex
                 h-10
                 w-10
+                cursor-pointer
                 items-center
                 justify-center
                 rounded-full
                 border
                 border-red-500/30
                 bg-[#111]
-                transition-all
+
+                transition-[transform,background-color,border-color]
                 duration-500
+                ease-out
+
+                hover:scale-110
                 hover:border-red-500
                 hover:bg-red-500
-                hover:scale-110
                 active:scale-90
-                cursor-pointer
               "
             >
               <span
                 className="
                   transition-transform
                   duration-300
+                  ease-out
                   group-hover:-translate-x-1
                 "
               >
@@ -229,25 +224,29 @@ const BlogPostsSection = () => {
                 flex
                 h-10
                 w-10
+                cursor-pointer
                 items-center
                 justify-center
                 rounded-full
                 border
                 border-red-500/30
                 bg-[#111]
-                transition-all
+
+                transition-[transform,background-color,border-color]
                 duration-500
+                ease-out
+
+                hover:scale-110
                 hover:border-red-500
                 hover:bg-red-500
-                hover:scale-110
                 active:scale-90
-                cursor-pointer
               "
             >
               <span
                 className="
                   transition-transform
                   duration-300
+                  ease-out
                   group-hover:translate-x-1
                 "
               >
@@ -259,7 +258,7 @@ const BlogPostsSection = () => {
         </div>
 
         {/* =====================================================
-            SLIDER
+            SWIPER
         ====================================================== */}
 
         <Swiper
@@ -282,32 +281,23 @@ const BlogPostsSection = () => {
             320: {
               slidesPerView: 1,
             },
-
             768: {
               slidesPerView: 2,
             },
-
             1024: {
               slidesPerView: 3,
             },
           }}
           className="mt-16"
         >
-
           {blogs.map((blog, index) => (
-
-            <SwiperSlide key={index}>
+            <SwiperSlide key={blog.title}>
 
               {/* =================================================
                   SLIDE WRAPPER
               ================================================= */}
 
-              <div
-                className="
-                  py-20
-                  px-1
-                "
-              >
+              <div className="px-1 py-20">
 
                 {/* =================================================
                     BLOG CARD
@@ -317,23 +307,24 @@ const BlogPostsSection = () => {
                   className="
                     group
                     relative
+                    cursor-pointer
                     overflow-hidden
                     rounded-3xl
                     border
                     border-red-500/20
                     bg-[#111]
-                    cursor-pointer
 
-                    transition-all
+                    /* IMPORTANT:
+                       Do NOT use transition-all.
+                       Only animate what actually changes.
+                    */
+                    transition-[transform,border-color,box-shadow]
                     duration-700
-                    ease-out
+                    ease-[cubic-bezier(0.22,1,0.36,1)]
 
                     hover:-translate-y-4
                     hover:border-red-500
-
-                    hover:shadow-[
-                      0_0_40px_rgba(255,0,0,0.25)
-                    ]
+                    hover:shadow-[0_0_40px_rgba(255,0,0,0.25)]
 
                     animate-[blogCardIn_0.8s_ease-out_both]
                   "
@@ -348,6 +339,7 @@ const BlogPostsSection = () => {
 
                   <div
                     className="
+                      pointer-events-none
                       absolute
                       left-0
                       top-0
@@ -359,8 +351,9 @@ const BlogPostsSection = () => {
                       via-orange-500
                       to-red-500
 
-                      transition-all
+                      transition-[width]
                       duration-700
+                      ease-[cubic-bezier(0.22,1,0.36,1)]
 
                       group-hover:w-full
                     "
@@ -375,14 +368,19 @@ const BlogPostsSection = () => {
                     <img
                       src={blog.image}
                       alt={blog.title}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      decoding="async"
                       className="
                         h-[560px]
                         w-full
                         object-cover
 
-                        transition-all
-                        duration-[900ms]
-                        ease-out
+                        transform-gpu
+                        will-change-transform
+
+                        transition-transform
+                        duration-[1100ms]
+                        ease-[cubic-bezier(0.16,1,0.3,1)]
 
                         group-hover:scale-110
                         group-hover:rotate-[1deg]
@@ -393,14 +391,16 @@ const BlogPostsSection = () => {
 
                     <div
                       className="
+                        pointer-events-none
                         absolute
                         inset-0
                         bg-black/10
 
-                        transition-all
+                        transition-opacity
                         duration-700
+                        ease-out
 
-                        group-hover:bg-black/0
+                        group-hover:opacity-0
                       "
                     />
 
@@ -408,6 +408,7 @@ const BlogPostsSection = () => {
 
                     <div
                       className="
+                        pointer-events-none
                         absolute
                         inset-0
                         bg-gradient-to-t
@@ -435,8 +436,9 @@ const BlogPostsSection = () => {
                         via-white/10
                         to-transparent
 
-                        transition-all
-                        duration-[1000ms]
+                        transition-[left]
+                        duration-[1100ms]
+                        ease-[cubic-bezier(0.22,1,0.36,1)]
 
                         group-hover:left-[130%]
                       "
@@ -473,13 +475,14 @@ const BlogPostsSection = () => {
                         text-xs
                         text-red-400
 
-                        transition-all
+                        transition-[transform,background-color,border-color,color]
                         duration-500
+                        ease-out
 
+                        group-hover:scale-105
                         group-hover:border-red-500/50
                         group-hover:bg-red-500/30
                         group-hover:text-red-300
-                        group-hover:scale-105
                       "
                     >
                       {blog.category}
@@ -494,8 +497,9 @@ const BlogPostsSection = () => {
                         font-bold
                         leading-7
 
-                        transition-all
+                        transition-[transform,color]
                         duration-500
+                        ease-out
 
                         group-hover:translate-x-1
                         group-hover:text-red-500
@@ -511,6 +515,7 @@ const BlogPostsSection = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Read ${blog.title}`}
+                      onClick={(e) => e.stopPropagation()}
                       className="
                         mt-5
                         inline-flex
@@ -519,15 +524,13 @@ const BlogPostsSection = () => {
                         text-sm
                         text-gray-300
 
-                        transition-all
+                        transition-[color,gap]
                         duration-500
+                        ease-out
 
-                        hover:text-red-500
                         hover:gap-4
+                        hover:text-red-500
                       "
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
                     >
                       <span>Learn More</span>
 
@@ -535,6 +538,8 @@ const BlogPostsSection = () => {
                         className="
                           transition-transform
                           duration-500
+                          ease-out
+
                           group-hover:translate-x-1
                         "
                       >
@@ -550,6 +555,7 @@ const BlogPostsSection = () => {
 
                   <div
                     className="
+                      pointer-events-none
                       absolute
                       -bottom-10
                       left-1/2
@@ -560,11 +566,12 @@ const BlogPostsSection = () => {
                       bg-red-500/0
                       blur-3xl
 
-                      transition-all
+                      transition-[transform,background-color]
                       duration-700
+                      ease-out
 
-                      group-hover:bg-red-500/40
                       group-hover:scale-150
+                      group-hover:bg-red-500/40
                     "
                   />
 
@@ -574,6 +581,7 @@ const BlogPostsSection = () => {
 
                   <div
                     className="
+                      pointer-events-none
                       absolute
                       -right-16
                       -top-16
@@ -583,22 +591,20 @@ const BlogPostsSection = () => {
                       bg-orange-500/0
                       blur-3xl
 
-                      transition-all
+                      transition-[transform,background-color]
                       duration-700
+                      ease-out
 
-                      group-hover:bg-orange-500/20
                       group-hover:scale-150
+                      group-hover:bg-orange-500/20
                     "
                   />
 
                 </div>
-
               </div>
 
             </SwiperSlide>
-
           ))}
-
         </Swiper>
 
       </div>
@@ -610,122 +616,126 @@ const BlogPostsSection = () => {
       <style>
         {`
 
-          /* -----------------------------------------------
+          /* ===============================================
              HEADER
-          ------------------------------------------------ */
+          =============================================== */
 
           @keyframes blogHeader {
-
             from {
               opacity: 0;
-              transform: translateY(-35px);
+              transform: translate3d(0, -35px, 0);
             }
 
             to {
               opacity: 1;
-              transform: translateY(0);
+              transform: translate3d(0, 0, 0);
             }
-
           }
 
 
-          /* -----------------------------------------------
+          /* ===============================================
              CARD ENTRANCE
-          ------------------------------------------------ */
+          =============================================== */
 
           @keyframes blogCardIn {
-
             from {
               opacity: 0;
-              transform: translateY(50px) scale(0.94);
+              transform: translate3d(0, 50px, 0) scale(0.94);
             }
 
             to {
               opacity: 1;
-              transform: translateY(0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
             }
-
           }
 
 
-          /* -----------------------------------------------
+          /* ===============================================
              LEFT RED GLOW
-          ------------------------------------------------ */
+          =============================================== */
 
           @keyframes blogGlow1 {
-
             0% {
-              transform: translate(0, 0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
               opacity: 0.5;
             }
 
             50% {
-              transform: translate(60px, -40px) scale(1.2);
+              transform: translate3d(60px, -40px, 0) scale(1.2);
               opacity: 0.8;
             }
 
             100% {
-              transform: translate(0, 0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
               opacity: 0.5;
             }
-
           }
 
 
-          /* -----------------------------------------------
+          /* ===============================================
              RIGHT ORANGE GLOW
-          ------------------------------------------------ */
+          =============================================== */
 
           @keyframes blogGlow2 {
-
             0% {
-              transform: translate(0, 0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
               opacity: 0.4;
             }
 
             50% {
-              transform: translate(-50px, 50px) scale(1.25);
+              transform: translate3d(-50px, 50px, 0) scale(1.25);
               opacity: 0.7;
             }
 
             100% {
-              transform: translate(0, 0) scale(1);
+              transform: translate3d(0, 0, 0) scale(1);
               opacity: 0.4;
             }
-
           }
 
 
-          /* -----------------------------------------------
+          /* ===============================================
              CENTER GLOW
-          ------------------------------------------------ */
+          =============================================== */
 
           @keyframes blogGlow3 {
-
             0% {
-              transform: translate(0, 0);
+              transform: translate3d(0, 0, 0);
               opacity: 0.2;
             }
 
             50% {
-              transform: translate(80px, -60px);
+              transform: translate3d(80px, -60px, 0);
               opacity: 0.5;
             }
 
             100% {
-              transform: translate(0, 0);
+              transform: translate3d(0, 0, 0);
               opacity: 0.2;
             }
-
           }
 
 
-          /* -----------------------------------------------
+          /* ===============================================
+             MOBILE PERFORMANCE
+          =============================================== */
+
+          @media (max-width: 768px) {
+            #blog [class*="blur-"] {
+              --tw-blur: blur(50px);
+            }
+
+            #blog .group:hover {
+              box-shadow: 0 0 25px rgba(255, 0, 0, 0.18);
+            }
+          }
+
+
+          /* ===============================================
              REDUCED MOTION
-          ------------------------------------------------ */
+          =============================================== */
 
           @media (prefers-reduced-motion: reduce) {
-
             *,
             *::before,
             *::after {
@@ -734,7 +744,6 @@ const BlogPostsSection = () => {
               transition-duration: 0.01ms !important;
               scroll-behavior: auto !important;
             }
-
           }
 
         `}
